@@ -7,20 +7,24 @@ beforeAll(async () => {
     console.log('Jest starting!');
 });
 
-afterAll(() => {
-    // close the server after each test
-    server.close();
-    console.log('Server closed!');
-}); 
-
 describe('Route tests', () => {
     test('Is login route available?  "/login" ', async () => {
         const response = await request(server).get('/login');
-        expect(response.status).toEqual(302);
+        expect(response.status).toEqual(200);
     });
 
-    test('Is order  route available?  "/order" ', async () => {
-        const response = await request(server).get('/order');
+    test('Is register route available?  "/register" ', async () => {
+        const response = await request(server).get('/register');
+        expect(response.status).toEqual(200);
+    });
+
+    test('Is account route available?  "/account" ', async () => {
+        const response = await request(server).get('/account');
+        expect(response.status).toEqual(200);
+    });
+
+    test('Is product route available?  "/product" ', async () => {
+        const response = await request(server).get('/product');
         expect(response.status).toEqual(200);
     });
 });
