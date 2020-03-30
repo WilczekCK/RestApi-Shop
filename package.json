@@ -1,0 +1,21 @@
+{
+  "name": "fastsell_api",
+  "version": "1.0.0",
+  "description": "api for project named as above",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "api",
+    "express",
+    "passport",
+    "node",
+    "js"
+  ],
+  "author": "Pawel Wilk",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
