@@ -26,7 +26,7 @@ mysql_controler = {
         mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
     },
     delete: (table, condition) => {
-
+        mysql_controler.query(`DELETE FROM ${table} WHERE ${condition}`);
     },
 }
 
