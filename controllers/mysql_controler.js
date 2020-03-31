@@ -8,20 +8,26 @@ mysql_controler = {
         password: 'rootpass',
         database: 'fastsell',
     },
-    query: () => {
+    query: (queryInfo) => {
         var connection = mysql.createConnection(mysql_controler.auth);
         connection.connect();
 
-        connection.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
+        connection.query(queryInfo, function (err, rows, fields) {
             if (err) throw err  
-            console.log('The solution is: ', rows[0].solution)
         })
 
         connection.end()
     },
-    insert: (table, rowNames, rowsInfo) => {},
-    update: (table, changingRows, replacedRows) => {},
-    delete: (table, condition) => {},
+    insert: (table, rowNames, rowsInfo) => {
+        mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);
+    },
+    update: (table, changingRows, condition) => {
+        //changingrows = {row = newValue, row2 = newValue2}
+        mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
+    },
+    delete: (table, condition) => {
+
+    },
 }
 
 
