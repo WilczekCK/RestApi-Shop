@@ -4,7 +4,7 @@ var mysql = require('../controllers/mysql_controler.js');
 
 router.get('/', function(req, res, next) {
     mysql.query();
-    res.status(200).end()
+    res.render('index', { title: 'Hey', message: 'Hello there!' })
 });
 
 module.exports = router;
