@@ -9,14 +9,20 @@ mysql_controler = {
         database: 'fastsell',
     },
     query: (queryInfo) => {
-        var connection = mysql.createConnection(mysql_controler.auth);
-        connection.connect();
-
-        connection.query(queryInfo, function (err, rows, fields) {
-            if (err) throw err  
+        return new Promise((resolve, reject) => {
+            var connection = mysql.createConnection(mysql_controler.auth);
+            connection.connect();
+    
+            connection.query(queryInfo, function (err, rows, fields) {
+                if (err) throw err  
+                resolve(rows);
+            })
+    
+            connection.end()
         })
-
-        connection.end()
+    },
+    show: async (table, condition) => {
+        return await mysql_controler.query('SELECT * FROM test');
     },
     insert: (table, rowNames, rowsInfo) => {
         mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);

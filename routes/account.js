@@ -3,7 +3,8 @@ var router = express.Router();
 var mysql = require('../controllers/mysql_controler.js');
 
 router.get('/', function(req, res, next) {
-    mysql.update('test', 'id = 3', 'id = 2' );
+    //console.log(await mysql.query('select * from test'))
+    mysql.insert('test', 'id', 1);
     res.render('index', { title: 'Hey', message: 'Hello there!' })
 });
 
