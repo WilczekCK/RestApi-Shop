@@ -4,8 +4,15 @@ var mysql = require('../controllers/mysql_controler.js');
 
 router.get('/', function(req, res, next) {
     //console.log(await mysql.query('select * from test'))
-    mysql.insert('test', 'id', 1);
     res.render('index', { title: 'Hey', message: 'Hello there!' })
 });
+
+router.post('/register', function(req, res, next) {});
+router.get('/login', function(req, res, next) {});
+
+router.get('/details', function(req, res, next) {}); //get
+router.post('/details', function(req, res, next) {}); //changing
+
+router.delete('/delete', function(req, res, next) {});
 
 module.exports = router;

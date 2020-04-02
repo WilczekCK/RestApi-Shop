@@ -5,12 +5,7 @@ order_controler = {
         setPaid: () => {}
     },
     createOrder: () => {
-        var products = product_controler.checkProducts(id);
-        var price = online_controler.sumPrice();
-
-        //dosmth
-
-        product_controler.setStatus(id);
+        
     },
     removeOrder: () => {
 
