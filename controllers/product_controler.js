@@ -1,5 +1,9 @@
 var product_controler = product_controler || {}
 product_controler = {
+    addNew: () => {
+        
+    },
+    
 }
 
 
