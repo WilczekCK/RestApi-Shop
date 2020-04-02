@@ -1,5 +1,17 @@
 var profile_controler = profile_controler || {}
 profile_controler = {
+    addNew: () => {
+
+    },
+    remove: () => {
+        
+    },
+    changeInfo: () => {
+
+    },
+    lookForProfile: () => {
+
+    }
 }
 
 
