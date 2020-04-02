@@ -22,7 +22,7 @@ mysql_controler = {
         })
     },
     show: async (table, condition) => {
-        return await mysql_controler.query('SELECT * FROM test');
+        return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
     insert: (table, rowNames, rowsInfo) => {
         mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);
@@ -34,6 +34,9 @@ mysql_controler = {
     delete: (table, condition) => {
         mysql_controler.query(`DELETE FROM ${table} WHERE ${condition}`);
     },
+    showCertain: async (table, condition, rules) => {
+        return await mysql_controler.query(`SELECT ${condition} FROM ${table} WHERE ${rules}`);
+    }
 }
 
 
