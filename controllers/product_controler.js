@@ -1,3 +1,5 @@
+var mysql = require('./mysql_controler');
+
 var product_controler = product_controler || {}
 product_controler = {
     addToCart: () => {
@@ -6,8 +8,11 @@ product_controler = {
     removeFromCart: () => {
 
     },
-    showDetails: () => {
-
+    showAll: async () => {
+        return await mysql.show('products', '*');
+    },
+    showDetails: async (condition) => {
+        return await mysql.showCertain('products', '*' ,`url_name = "${condition}"`);
     }
 }   
 

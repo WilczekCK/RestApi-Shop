@@ -15,7 +15,8 @@
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
     "pug": "^2.0.4",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "underscore": "^1.10.2"
   },
   "devDependencies": {
     "jest": "^25.2.4"
