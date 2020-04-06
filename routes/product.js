@@ -8,7 +8,9 @@ router.get('/', async function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    res.status(200).end()
+    const response = product.addProduct(req.body);
+
+    res.send(response)
 });
 
 router.delete('/', function(req, res, next) {
