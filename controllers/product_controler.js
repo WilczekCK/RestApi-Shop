@@ -40,9 +40,11 @@ product_controler = {
         }
     },
     removeProduct: async (incomingInfo) => {
-        const isIdFieldFilled = _.every(productIncoming, function (productInfo) {return productInfo != null});
-        if(isIdFieldFilled){
-            //delete
+        const isIdFieldFilled = _.isEmpty(incomingInfo);
+        if(!isIdFieldFilled){
+            const isRemoved = await mysql.delete('products', incomingInfo.id);
+            if(isRemoved) return `You successfully removed the product with ID ${incomingInfo.id}`
+            else return `There is no item with that ID!`;
         }else{
             return 'One of the field is missing!'
         }

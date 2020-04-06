@@ -12,9 +12,9 @@ router.post('/', function(req, res, next) {
     res.send(response)
 });
 
-router.delete('/', function(req, res, next) {
-    const response = product.removeProduct
-    res.status(200).end()
+router.delete('/', async function(req, res, next) {
+    const response = await product.removeProduct(req.body);
+    res.send(response);
 });
 
 router.patch('/details', function(req, res, next) {

@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var _ = require('underscore');
 
 var mysql_controler = mysql_controler || {}
 mysql_controler = {
@@ -32,8 +33,12 @@ mysql_controler = {
         //changingrows = {row = newValue, row2 = newValue2}
         mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
     },
-    delete: (table, condition) => {
-        mysql_controler.query(`DELETE FROM ${table} WHERE ${condition}`);
+    delete: async (table, condition) => {
+        console.log(table, condition)
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
+        else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition}`);
+
+        return true;
     },
     showCertain: async (table, condition, rules) => {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table} WHERE ${rules}`);
