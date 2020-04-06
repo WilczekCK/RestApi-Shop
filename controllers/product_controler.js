@@ -2,12 +2,6 @@ var mysql = require('./mysql_controler');
 var _ = require('underscore');
 var product_controler = product_controler || {}
 product_controler = {
-    addToCart: () => {
-        
-    },
-    removeFromCart: () => {
-
-    },
     showAll: async () => {
         return await mysql.show('products', '*');
     },
