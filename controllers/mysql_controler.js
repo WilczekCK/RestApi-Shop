@@ -29,12 +29,14 @@ mysql_controler = {
         console.log(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
         mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);
     },
-    update: (table, changingRows, condition) => {
+    update: async (table, changingRows, condition) => {
         //changingrows = {row = newValue, row2 = newValue2}
-        mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
+        else await mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
+        
+        return true;
     },
     delete: async (table, condition) => {
-        console.log(table, condition)
         if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
         else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition}`);
 

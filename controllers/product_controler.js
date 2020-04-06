@@ -44,7 +44,21 @@ product_controler = {
         }
     },
     changeDetails: async (incomingInfo) => {
-        
+        const areFieldsEmpty = _.isEmpty(incomingInfo);
+        if(!areFieldsEmpty) {
+            
+        }else{
+
+        }
+        //     const preparedStrings = []; 
+        //     _.each(productIncoming, (value) => {
+        //         preparedStrings.push(`'${value}'`)
+        //     });
+
+        //     const isChanged = await mysql.update('products', `${preparedStrings}`)
+        // }else{
+        //     return 'One or more fields are missing!'
+        // }
     }
 }   
 
