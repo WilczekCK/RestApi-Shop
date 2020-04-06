@@ -42,7 +42,10 @@ product_controler = {
         }else{
             return 'One of the field is missing!'
         }
-    }  
+    },
+    changeDetails: async (incomingInfo) => {
+        
+    }
 }   
 
 
