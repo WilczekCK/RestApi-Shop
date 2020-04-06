@@ -39,6 +39,14 @@ product_controler = {
             return 'One or more fields are missing!'
         }
     },
+    removeProduct: async (incomingInfo) => {
+        const isIdFieldFilled = _.every(productIncoming, function (productInfo) {return productInfo != null});
+        if(isIdFieldFilled){
+            //delete
+        }else{
+            return 'One of the field is missing!'
+        }
+    }  
 }   
 
 
