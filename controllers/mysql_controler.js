@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var _ = require('underscore');
 
 var mysql_controler = mysql_controler || {}
 mysql_controler = {
@@ -25,14 +26,21 @@ mysql_controler = {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
     insert: (table, rowNames, rowsInfo) => {
+        console.log(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
         mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);
     },
-    update: (table, changingRows, condition) => {
+    update: async (table, changingRows, condition) => {
         //changingrows = {row = newValue, row2 = newValue2}
-        mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `${condition}`))) return false;
+        else await mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
+        
+        return true;
     },
-    delete: (table, condition) => {
-        mysql_controler.query(`DELETE FROM ${table} WHERE ${condition}`);
+    delete: async (table, condition) => {
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
+        else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition}`);
+
+        return true;
     },
     showCertain: async (table, condition, rules) => {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table} WHERE ${rules}`);
