@@ -19,7 +19,18 @@ describe('Route tests', () => {
     });
 
     test('Is product possible to add?  "POST /product" ', async () => {
-
+        await request(server)
+            .post('/product')
+            .send({
+            name: 'Test',
+            weight: 10, 
+            price: 100,
+            photo: 'Test.jpg',
+            category: 'Test',
+            nutritional_table: 'Test',
+            vat_percentage: 23,
+            url_name: 'Test'})
+            .expect(200);
     });
 
 });
