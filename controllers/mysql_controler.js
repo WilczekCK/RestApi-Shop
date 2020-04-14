@@ -26,11 +26,10 @@ mysql_controler = {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
     insert: (table, rowNames, rowsInfo) => {
-        console.log(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
         mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);
     },
     update: async (table, changingRows, condition) => {
-        //changingrows = {row = newValue, row2 = newValue2}
+        //changingrows = {row = newValue, row2 = newValue2})
         if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `${condition}`))) return false;
         else await mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
         
