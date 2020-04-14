@@ -2,12 +2,8 @@ var mysql = require('./mysql_controler');
 var _ = require('underscore');
 var product_controler = product_controler || {}
 product_controler = {
-    showAll: async () => {
-        return await mysql.show('products', '*');
-    },
-    showDetails: async (condition) => {
-        return await mysql.showCertain('products', '*' ,`url_name = "${condition}"`);
-    },
+    showAll: async () => await mysql.show('products', '*'),
+    showDetails: async (condition) => await mysql.showCertain('products', '*' ,`url_name = "${condition}"`),
     addProduct: (incomingInfo) => {
         const productIncoming = [
             incomingInfo.name,
@@ -20,7 +16,7 @@ product_controler = {
             incomingInfo.url_name
         ]
 
-        const areFieldsFilled = _.every(productIncoming, function (productInfo) {return productInfo != null});
+        const areFieldsFilled = _.every(productIncoming, (productInfo) => productInfo != null)
         if(areFieldsFilled) {
             const preparedStrings = []; 
             _.each(productIncoming, (value) => {
