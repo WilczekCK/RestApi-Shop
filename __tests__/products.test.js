@@ -33,4 +33,17 @@ describe('Route tests', () => {
             .expect(200);
     });
 
+    test('Is added product possible to see "GET /product/:name"', async () => {
+        await request(server)
+            .get('/product/Test')
+            .expect(function(res){
+                expect(res.body[0].name).toEqual('Test')
+            })
+    })
+
+    test('Is possible to change detail?', async () => {
+        await request(server)
+            .patch('/product/details')
+            .send({rowsToChange: `name = 'TestChanged'`, condition: `name = 'Test'`})
+    })
 });
