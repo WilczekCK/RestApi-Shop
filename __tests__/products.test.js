@@ -12,7 +12,7 @@ afterAll(async (done) => {
     server.close(done);
 })
 
-describe('Route tests', () => {
+describe('Product test', () => {
     test('Is product display route available?  "GET /product" ', async () => {
         const response = await request(server).get('/product');
         expect(response.status).toEqual(200);
@@ -45,5 +45,21 @@ describe('Route tests', () => {
         await request(server)
             .patch('/product/details')
             .send({rowsToChange: `name = 'TestChanged'`, condition: `name = 'Test'`})
+            .expect(200)
+    })
+
+    test('Is possible to remove product?', async () => {
+        let id;
+        await request(server)
+            .get('/product/Test')
+            .expect((res) => {
+                id = res.body[0].id
+            })
+            .expect(200)
+
+        await request(server)
+            .delete('/product')
+            .send({id: id})
+            .expect(200);
     })
 });
