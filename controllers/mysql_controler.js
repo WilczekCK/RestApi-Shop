@@ -31,7 +31,7 @@ mysql_controler = {
     },
     update: async (table, changingRows, condition) => {
         //changingrows = {row = newValue, row2 = newValue2}
-        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `${condition}`))) return false;
         else await mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
         
         return true;

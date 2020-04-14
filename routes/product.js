@@ -19,7 +19,6 @@ router.delete('/', async function(req, res, next) {
 
 router.patch('/details', async function(req, res, next) {
     const isProductDetailChanged = await product.changeDetails(req.body);
-    
     res.send(isProductDetailChanged);
 });
 

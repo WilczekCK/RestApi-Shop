@@ -40,25 +40,27 @@ product_controler = {
             if(isRemoved) return `You successfully removed the product with ID ${incomingInfo.id}`
             else return `There is no item with that ID!`;
         }else{
-            return 'One of the field is missing!'
+            return 'One of the fields are missing!'
         }
     },
     changeDetails: async (incomingInfo) => {
         const areFieldsEmpty = _.isEmpty(incomingInfo);
         if(!areFieldsEmpty) {
-            
+            const infoToChange = [
+                incomingInfo.rowsToChange,
+                incomingInfo.condition
+            ]
+
+            const areAllFieldsFilled = _.every(infoToChange, (fieldsTest) => fieldsTest != null);
+            if(areAllFieldsFilled) {
+                await mysql.update('products', `${infoToChange[0]}`, `${infoToChange[1]}`)
+                return 'You successfully updated the product!'
+            }else{
+                return 'One of the fields are missing!'
+            } 
         }else{
-
+            return 'One of the fields are missing!'
         }
-        //     const preparedStrings = []; 
-        //     _.each(productIncoming, (value) => {
-        //         preparedStrings.push(`'${value}'`)
-        //     });
-
-        //     const isChanged = await mysql.update('products', `${preparedStrings}`)
-        // }else{
-        //     return 'One or more fields are missing!'
-        // }
     }
 }   
 
