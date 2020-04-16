@@ -1,7 +1,6 @@
 var auth_controler = auth_controler || {}
 auth_controler = {
-    o2Auth: {
-
+    o2Auth: () => {
     },
     login: {
 

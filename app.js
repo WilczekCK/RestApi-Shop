@@ -3,6 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var passport = require("passport");
+var session = require("express-session"),
+    bodyParser = require("body-parser");
 
 var orderRouter = require('./routes/order');
 var accountRouter = require('./routes/account');
@@ -35,6 +38,11 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.use(session({ secret: "cats" }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 var server = app.listen(3000, function(){
   var port = server.address().port;
