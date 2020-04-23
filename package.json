@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -18,6 +19,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pug": "^2.0.4",
+    "req-flash": "0.0.3",
     "supertest": "^4.0.2",
     "underscore": "^1.10.2"
   },

@@ -7,6 +7,7 @@ var passport = require("passport");
 var session = require("express-session"),
     bodyParser = require("body-parser");
 
+
 var orderRouter = require('./routes/order');
 var accountRouter = require('./routes/account');
 var productRouter = require('./routes/product');
@@ -39,7 +40,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.use(session({ secret: "cats" }));
+app.use(session({ secret: "cats", resave: true, saveUninitialized: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
