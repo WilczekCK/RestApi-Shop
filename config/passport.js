@@ -73,7 +73,7 @@ passport.use(
         
         const userInfo = await mysql.showCertain( `users`, `*`, `email = '${username}'`);
         
-        console.log(userInfo)
+        //console.log(userInfo)
 
         if (!userInfo.length) {
             return done(null, false, { message: "No user found" }); // req.flash is the way to set flashdata using connect-flash
