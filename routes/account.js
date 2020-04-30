@@ -35,6 +35,9 @@ router.post('/login', async (req, res, next) => {
 router.get('/details', function (req, res, next) { }); //get
 router.post('/details', function (req, res, next) { }); //changing
 
-router.delete('/delete', function (req, res, next) { });
+router.delete('/delete', async function (req, res, next) {
+  const deletionResponse = await profile.remove(req.body);
+  res.status(deletionResponse.status).send(deletionResponse);
+});
 
 module.exports = router;

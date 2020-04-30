@@ -48,8 +48,16 @@ profile_controler = {
             }
         }
     },
-    remove: () => {
-        
+    remove: async ({id}) => {
+        if(!id) return {status:406, message:'Provide the ID of a profile you want to remove!'};
+        const isUserInDb = await mysql.showCertain('users', '*', `id = ${id}`);
+
+        if(!_.isEmpty(isUserInDb)){
+            await mysql.delete('users', id)
+            return {status:200, message:'You successfully removed this user!'};
+        }else{
+            return {status:404, message:'User not found in db'};
+        }
     },
     changeInfo: () => {
 
