@@ -32,28 +32,6 @@ router.post('/login', async (req, res, next) => {
   })(req, res, next);
 });
 
-// app.post('/login', passport.authenticate('local-login', {
-
-//         successRedirect : '/', // redirect to the secure profile section
-//         failureRedirect : '/', // redirect back to the signup page if there is an error
-//         failureFlash : true // allow flash messages
-
-//     }),
-//     function(req, res) {
-
-//         console.log("hello");
-
-//         if (req.body.remember) {
-//         req.session.cookie.maxAge = 1000 * 60 * 3;
-//         } else {
-//         req.session.cookie.expires = false;
-//         }
-//     res.redirect('/');
-
-// })
-
-// router.get('/login/auth', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'}));
-
 router.get('/details', function (req, res, next) { }); //get
 router.post('/details', function (req, res, next) { }); //changing
 
