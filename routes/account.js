@@ -36,7 +36,7 @@ router.get('/details', function (req, res, next) { }); //get
 
 router.patch('/details', async function (req, res, next) {
   const changeResponse = await profile.changeInfo(req.body);
-  res.send(changeResponse);
+  res.status(changeResponse.status).send(changeResponse);
 });
 
 router.delete('/delete', async function (req, res, next) {
