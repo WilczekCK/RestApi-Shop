@@ -33,7 +33,11 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.get('/details', function (req, res, next) { }); //get
-router.post('/details', function (req, res, next) { }); //changing
+
+router.patch('/details', async function (req, res, next) {
+  const changeResponse = await profile.changeInfo(req.body);
+  res.send(changeResponse);
+});
 
 router.delete('/delete', async function (req, res, next) {
   const deletionResponse = await profile.remove(req.body);

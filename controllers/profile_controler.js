@@ -1,45 +1,45 @@
 var mysql = require('./mysql_controler');
 var _ = require('underscore');
-const bcrypt = require('bcrypt');   
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
 var profile_controler = profile_controler || {}
 profile_controler = {
     login: (req, user) => {
-        return new Promise((resolve, reject) =>{
+        return new Promise((resolve, reject) => {
             req.logIn(user, async err => {
-                if(err) throw err
+                if (err) throw err
                 let foundUser = profile_controler.lookForProfile(`email = '${user.email}'`);
                 const token = jwt.sign({ id: foundUser.username }, 'jwtSecret.secret');
-    
-                resolve({auth: true, token: token, message: 'user logged in successfully'});
+
+                resolve({ auth: true, token: token, message: 'user logged in successfully' });
             });
         })
     },
     addNew: async (userInfo) => {
         const isRegistered = await profile_controler.lookForProfile(`email = '${userInfo.email}'`);
-        if(isRegistered.length){
+        if (isRegistered.length) {
             return 'That account is already registered!'
-        }else{
+        } else {
             var hashedPassword;
-            if(userInfo.password !== undefined){
+            if (userInfo.password !== undefined) {
                 hashedPassword = bcrypt.hashSync(userInfo.password, 10);
             }
-        
+
             const collectedInfo = {
                 name: userInfo.firstName,
                 surname: userInfo.secondName,
                 email: userInfo.email,
                 password: hashedPassword,
-                phone: userInfo.phone, 
+                phone: userInfo.phone,
                 street: userInfo.street,
                 city: userInfo.city,
                 post_code: userInfo.postCode
             }
 
-            if(_.contains(collectedInfo, undefined)) return 'You are missing one of the fields!'
+            if (_.contains(collectedInfo, undefined)) return 'You are missing one of the fields!'
             else {
-                mysql.insert('users', 
+                mysql.insert('users',
                     'firstName, secondName, email, password, phone, city, street, postCode',
                     `'${collectedInfo.name}', '${collectedInfo.surname}', '${collectedInfo.email}', '${collectedInfo.password}', ${collectedInfo.phone}, '${collectedInfo.city}', '${collectedInfo.street}', '${collectedInfo.post_code}'`
                 )
@@ -48,19 +48,27 @@ profile_controler = {
             }
         }
     },
-    remove: async ({id}) => {
-        if(!id) return {status:406, message:'Provide the ID of a profile you want to remove!'};
+    remove: async ({ id }) => {
+        if (!id) return { status: 406, message: 'Provide the ID of a profile you want to remove!' };
         const isUserInDb = await mysql.showCertain('users', '*', `id = ${id}`);
 
-        if(!_.isEmpty(isUserInDb)){
+        if (!_.isEmpty(isUserInDb)) {
             await mysql.delete('users', id)
-            return {status:200, message:'You successfully removed this user!'};
-        }else{
-            return {status:404, message:'User not found in db'};
+            return { status: 200, message: 'You successfully removed this user!' };
+        } else {
+            return { status: 404, message: 'User not found in db' };
         }
     },
-    changeInfo: () => {
+    changeInfo: async ({id, rowsToChange}) => {
+        if(!id || !rowsToChange) return {status: 406, message: 'You are missing one of the parameters'}
+        const isUserInDb = await mysql.showCertain('users', '*', `id = ${id}`);
 
+        if (!_.isEmpty(isUserInDb)) {
+            await mysql.update('users', rowsToChange, `id = ${id}`);
+            return { status: 200, message: 'You successfully changed info of this user!' };
+        } else {
+            return { status: 404, message: 'User not found in db' };
+        }
     },
     lookForProfile: async (condition) => {
         const info = await mysql.showCertain('users', '*', `${condition}`);
