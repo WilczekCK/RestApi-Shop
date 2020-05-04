@@ -16,35 +16,20 @@ profile_controler = {
             });
         })
     },
-    addNew: async (userInfo) => {
-        const isRegistered = await profile_controler.lookForProfile(`email = '${userInfo.email}'`);
+    addNew: async ({ firstName, secondName, email, password, phone, street, city, postCode }) => {
+        const isRegistered = await profile_controler.lookForProfile(`email = '${email}'`);
         if (isRegistered.length) {
-            return 'That account is already registered!'
+            return { status: 409, message: 'Account with that email is already registered!' }
         } else {
-            var hashedPassword;
-            if (userInfo.password !== undefined) {
-                hashedPassword = bcrypt.hashSync(userInfo.password, 10);
-            }
-
-            const collectedInfo = {
-                name: userInfo.firstName,
-                surname: userInfo.secondName,
-                email: userInfo.email,
-                password: hashedPassword,
-                phone: userInfo.phone,
-                street: userInfo.street,
-                city: userInfo.city,
-                post_code: userInfo.postCode
-            }
-
-            if (_.contains(collectedInfo, undefined)) return 'You are missing one of the fields!'
-            else {
+            if (firstName || secondName || email || password || phone || street || city || postCode) {
                 mysql.insert('users',
                     'firstName, secondName, email, password, phone, city, street, postCode',
-                    `'${collectedInfo.name}', '${collectedInfo.surname}', '${collectedInfo.email}', '${collectedInfo.password}', ${collectedInfo.phone}, '${collectedInfo.city}', '${collectedInfo.street}', '${collectedInfo.post_code}'`
+                    `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}, '${city}', '${street}', '${postCode}'`
                 )
 
-                return 'You are registered successfully!'
+                return { status: 200, message: 'You are registered succesfully!' };
+            } else {
+                return { status: 400, message: 'You are missing one of the parameters' }
             }
         }
     },
@@ -59,8 +44,8 @@ profile_controler = {
             return { status: 404, message: 'User not found in db' };
         }
     },
-    changeInfo: async ({id, rowsToChange}) => {
-        if(!id || !rowsToChange) return {status: 406, message: 'You are missing one of the parameters'}
+    changeInfo: async ({ id, rowsToChange }) => {
+        if (!id || !rowsToChange) return { status: 400, message: 'You are missing one of the parameters' }
         const isUserInDb = await mysql.showCertain('users', '*', `id = ${id}`);
 
         if (!_.isEmpty(isUserInDb)) {
