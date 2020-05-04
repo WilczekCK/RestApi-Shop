@@ -3,27 +3,45 @@ var router = express.Router();
 var mysql = require('../controllers/mysql_controler.js');
 var profile = require('../controllers/profile_controler.js');
 var auth = require('../controllers/auth_controler.js');
-var passport = require('passport');
-auth.passport.init();
-router.get('/', function(req, res, next) {
-    //console.log(await mysql.query('select * from test'))
-    res.render('index', { title: 'Hey', message: 'Hello there!' })
+const passport = require('passport');
+
+router.get('/', function (req, res, next) {
+  //console.log(await mysql.query('select * from test'))
+  res.render('index', { title: 'Hey', message: 'Hello there!' })
 });
 
-router.get('/register', async (req, res) => {
-    const profileResponse = await profile.addNew(req.body);
-    res.send(profileResponse)
+router.post('/register', async (req, res) => {
+  const profileResponse = await profile.addNew(req.body);
+  res.send(profileResponse)
 })
 
+router.post('/login', async (req, res, next) => {
+    await passport.authenticate('local-login', async (err, user, info) => {
+      if (err) {
+        console.log(err);
+      }
 
-router.get('/login', async function(req, res, next) {
-
+      if (info != undefined) {
+        res.status(401).send(info.message);
+      } else {
+        profile.login(req, user)
+        .then(function(isLoggedIn){
+          res.status(200).send(isLoggedIn);
+        })
+      }
+  })(req, res, next);
 });
-router.get('/login/auth', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'}));
 
-router.get('/details', function(req, res, next) {}); //get
-router.post('/details', function(req, res, next) {}); //changing
+router.get('/details', function (req, res, next) { }); //get
 
-router.delete('/delete', function(req, res, next) {});
+router.patch('/details', async function (req, res, next) {
+  const changeResponse = await profile.changeInfo(req.body);
+  res.status(changeResponse.status).send(changeResponse);
+});
+
+router.delete('/delete', async function (req, res, next) {
+  const deletionResponse = await profile.remove(req.body);
+  res.status(deletionResponse.status).send(deletionResponse);
+});
 
 module.exports = router;

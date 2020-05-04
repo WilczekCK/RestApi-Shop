@@ -7,19 +7,24 @@ var passport = require("passport");
 var session = require("express-session"),
     bodyParser = require("body-parser");
 
-
 var orderRouter = require('./routes/order');
 var accountRouter = require('./routes/account');
 var productRouter = require('./routes/product');
+var cors = require('cors');
 
 var app = express();
+
+require('./config/passport');
+
+app.use(cors());
+app.options('*', cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug')
-
+app.use(passport.initialize());
 app.use('/order', orderRouter);
 app.use('/account', accountRouter);
 app.use('/product', productRouter);
@@ -42,7 +47,7 @@ app.use(function(err, req, res, next) {
 
 app.use(session({ secret: "cats", resave: true, saveUninitialized: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(passport.initialize());
+app.use(bodyParser.json() );
 app.use(passport.session());
 
 var server = app.listen(3000, function(){
