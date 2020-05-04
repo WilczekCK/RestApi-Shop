@@ -3,62 +3,38 @@ var _ = require('underscore');
 var product_controler = product_controler || {}
 product_controler = {
     showAll: async () => await mysql.show('products', '*'),
-    showDetails: async (condition) => await mysql.showCertain('products', '*' ,`url_name = "${condition}"`),
-    addProduct: (incomingInfo) => {
-        const productIncoming = [
-            incomingInfo.name,
-            incomingInfo.weight,
-            incomingInfo.price,
-            incomingInfo.photo,
-            incomingInfo.category,
-            incomingInfo.nutritional_table,
-            incomingInfo.vat_percentage,
-            incomingInfo.url_name
-        ]
-
-        const areFieldsFilled = _.every(productIncoming, (productInfo) => productInfo != null)
-        if(areFieldsFilled) {
-            const preparedStrings = []; 
-            _.each(productIncoming, (value) => {
-                preparedStrings.push(`'${value}'`)
-            });
-
-            mysql.insert('products', 'name, weight, price, photo, category, nutritional_table, vat_percentage, url_name', `${preparedStrings}`);
-            return `You successfuly added the product named ${incomingInfo.name}!`
-        } else{
-            return 'One or more fields are missing!'
+    showDetails: async (condition) => await mysql.showCertain('products', '*', `url_name = "${condition}"`),
+    addProduct: ({ name, weight, price, photo, category, nutritional_table, vat_percentage, url_name }) => {
+        if (!name || !weight || !price || !photo || !category ||
+            !nutritional_table || !vat_percentage || !url_name) {
+            return { status: 400, message: 'One of the fields are missing!' };
+        } else {
+            mysql.insert('products',
+                'name, weight, price, photo, category, nutritional_table, vat_percentage, url_name',
+                `'${name}','${weight}','${price}','${photo}','${category}','${nutritional_table}','${vat_percentage}','${url_name}'`);
+            return { status: 200, message: 'You successfully added new item named ' + name };
         }
     },
-    removeProduct: async (incomingInfo) => {
-        const isIdFieldFilled = _.isEmpty(incomingInfo);
-        if(!isIdFieldFilled){
-            const isRemoved = await mysql.delete('products', incomingInfo.id);
-            if(isRemoved) return `You successfully removed the product with ID ${incomingInfo.id}`
-            else return `There is no item with that ID!`;
-        }else{
-            return 'One of the fields are missing!'
+    removeProduct: async ({ id }) => {
+        if (id) {
+            const isRemoved = await mysql.delete('products', id);
+            //isRemoved gives response, if yes = true, no = false
+
+            if (isRemoved) return { status: 200, message: 'You successfully removed product id ' + id };
+            else return { status: 400, message: 'There is no item with that ID' };
+        } else {
+            return { status: 400, message: 'One of the fields are missing!' };
         }
     },
-    changeDetails: async (incomingInfo) => {
-        const areFieldsEmpty = _.isEmpty(incomingInfo);
-        if(!areFieldsEmpty) {
-            const infoToChange = [
-                incomingInfo.rowsToChange,
-                incomingInfo.condition
-            ]
-
-            const areAllFieldsFilled = _.every(infoToChange, (fieldsTest) => fieldsTest != null);
-            if(areAllFieldsFilled) {
-                await mysql.update('products', `${infoToChange[0]}`, `${infoToChange[1]}`)
-                return 'You successfully updated the product!'
-            }else{
-                return 'One of the fields are missing!'
-            } 
-        }else{
-            return 'One of the fields are missing!'
+    changeDetails: async ({ rowsToChange, condition }) => {
+        if (rowsToChange || condition) {
+            await mysql.update('products', `${rowsToChange}`, `${condition}`)
+            return { status: 200, message: 'You successfully updated the product!' };
+        } else {
+            return { status: 400, message: 'One of the fields are missing!' };
         }
     }
-}   
+}
 
 
 module.exports = product_controler || 'Product Controler Problem!';

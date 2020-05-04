@@ -8,19 +8,18 @@ router.get('/', async function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    console.log(req.body)
     const isNewProductAdded = product.addProduct(req.body);
-    res.send(isNewProductAdded)
+    res.status(isNewProductAdded.status).send(isNewProductAdded);
 });
 
 router.delete('/', async function(req, res, next) {
     const isProductRemoved = await product.removeProduct(req.body);
-    res.send(isProductRemoved);
+    res.status(isProductRemoved.status).send(isProductRemoved);
 });
 
 router.patch('/details', async function(req, res, next) {
     const isProductDetailChanged = await product.changeDetails(req.body);
-    res.send(isProductDetailChanged);
+    res.status(isProductDetailChanged).send(isProductDetailChanged);
 });
 
 router.get('/:url_name', async function(req, res, next) {
