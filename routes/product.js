@@ -14,7 +14,7 @@ router.post('/', function(req, res, next) {
 
 router.delete('/', async function(req, res, next) {
     const isProductRemoved = await product.removeProduct(req.body);
-    res.send(isProductRemoved);
+    res.status(isProductRemoved.status).send(isProductRemoved);
 });
 
 router.patch('/details', async function(req, res, next) {

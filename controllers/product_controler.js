@@ -15,14 +15,13 @@ product_controler = {
             return { status: 200, message: 'You successfully added new item named ' + name };
         }
     },
-    removeProduct: async (incomingInfo) => {
-        const isIdFieldFilled = _.isEmpty(incomingInfo);
-        if (!isIdFieldFilled) {
-            const isRemoved = await mysql.delete('products', incomingInfo.id);
-            if (isRemoved) return `You successfully removed the product with ID ${incomingInfo.id}`
-            else return `There is no item with that ID!`;
+    removeProduct: async ({ id }) => {
+        if (id) {
+            const isRemoved = await mysql.delete('products', id);
+            if (isRemoved) return { status: 200, message: 'You successfully removed product id ' + id };
+            else return { status: 400, message: 'There is no item with that ID' };
         } else {
-            return 'One of the fields are missing!'
+            return { status: 400, message: 'One of the fields are missing!' };
         }
     },
     changeDetails: async (incomingInfo) => {
