@@ -9,8 +9,8 @@ profile_controler = {
         return new Promise((resolve, reject) => {
             req.logIn(user, async err => {
                 if (err) throw err
-                let foundUser = profile_controler.lookForProfile(`email = '${user.email}'`);
-                const token = jwt.sign({ id: foundUser.username }, 'jwtSecret.secret');
+                let foundUser = await profile_controler.lookForProfile(`email = '${user.email}'`);
+                const token = jwt.sign({ id: foundUser[0].id }, 'jwtSecret');
 
                 resolve({ auth: true, token: token, message: 'user logged in successfully' });
             });

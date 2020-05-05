@@ -44,4 +44,11 @@ router.delete('/delete', async function (req, res, next) {
   res.status(deletionResponse.status).send(deletionResponse);
 });
 
+router.get('/findUser', async(req, res, next) => {
+  auth.authenticate(req, res, next).then( async(userId)=> {
+    const response = await profile.lookForProfile(`id = ${userId}`)
+    res.status(200).send(response);
+  }, ()=>{})
+});
+
 module.exports = router;

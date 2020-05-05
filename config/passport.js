@@ -59,3 +59,27 @@ const opts = {
   jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
   secretOrKey: 'jwtSecret',
 };
+
+passport.use(
+  'jwt',
+  new JWTstrategy(opts, async (jwt_payload, done) => {
+    console.log('jwt_payload')
+    console.log(jwt_payload)
+    try {
+
+      const userInfo = await mysql.showCertain( `users`, `*`, `id = '${jwt_payload.id}'`);
+
+        if (userInfo.length > 0) {
+          console.log('user found in db in passport');
+          done(null, userInfo[0].id );
+        } else {
+          console.log('user not found in db');
+          done(null, false);
+        }
+
+    } 
+    catch (err) {
+      done(err);
+    }
+  }),
+)
