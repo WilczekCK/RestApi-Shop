@@ -1,5 +1,5 @@
 var bcrypt = require('bcrypt');
-var jwtSecret = 'jwtSecret';
+var jwtSecret = require('./jwtSecret');
 
 var mysql = require('../controllers/mysql_controler');
 
@@ -57,7 +57,7 @@ passport.use(
 
 const opts = {
   jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
-  secretOrKey: 'jwtSecret',
+  secretOrKey: jwtSecret,
 };
 
 passport.use(

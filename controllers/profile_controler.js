@@ -1,7 +1,8 @@
 var mysql = require('./mysql_controler');
 var _ = require('underscore');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const jwtSecret = require('./../config/jwtSecret')
 
 var profile_controler = profile_controler || {}
 profile_controler = {
@@ -10,7 +11,7 @@ profile_controler = {
             req.logIn(user, async err => {
                 if (err) throw err
                 let foundUser = await profile_controler.lookForProfile(`email = '${user.email}'`);
-                const token = jwt.sign({ id: foundUser[0].id }, 'jwtSecret');
+                const token = jwt.sign({ id: foundUser[0].id }, jwtSecret);
 
                 resolve({ auth: true, token: token, message: 'user logged in successfully' });
             });

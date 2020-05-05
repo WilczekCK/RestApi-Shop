@@ -2,6 +2,7 @@ var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy,
   JWTstrategy = require('passport-jwt').Strategy,
   ExtractJWT = require('passport-jwt').ExtractJwt;
+  jwtSecret = require('./../config/jwtSecret');
 
 var jwt = require('jsonwebtoken')
 var flash = require('req-flash');
@@ -9,7 +10,7 @@ var mysql = require('./mysql_controler');
 
 const opts = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
-    secretOrKey: 'jwtSecret',
+    secretOrKey: jwtSecret,
 };
 
 var auth_controler = auth_controler || {}
