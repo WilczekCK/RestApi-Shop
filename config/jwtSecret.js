@@ -1,2 +1,2 @@
-jwtSecret = 'krglagrblasbglaebrg;kjabrg;aerbg;aejrgbaergb';
+jwtSecret = 'krglagrbddgfbsdfgbsedrgsdfgsd';
 module.exports = jwtSecret;

@@ -28,21 +28,15 @@ passport.use(
     },
     async (username, password, done) => {
 
-      console.log("CREDS")
-      console.log(username)
-      console.log(password)
-
       try{
         
         const userInfo = await mysql.showCertain( `users`, `*`, `email = '${username}'`);
         
-        //console.log(userInfo)
-
         if (!userInfo.length) {
-            return done(null, false, { message: "No user found" }); // req.flash is the way to set flashdata using connect-flash
+            return done(null, false, { message: "No user found" });
         }
         if ( !bcrypt.compareSync(password, userInfo[0].password) )
-            return done(null, false, { message: "Wrong pass" }); // create the loginMessage and save it to session as flashdata
+            return done(null, false, { message: "Wrong pass" });
 
         // all is well, return successful user
         return done(null, userInfo[0]);

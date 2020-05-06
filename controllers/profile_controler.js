@@ -6,17 +6,22 @@ const jwtSecret = require('./../config/jwtSecret')
 
 var profile_controler = profile_controler || {}
 profile_controler = {
-    login: (req, user) => {
-        return new Promise((resolve, reject) => {
-            req.logIn(user, async err => {
-                if (err) throw err
-                let foundUser = await profile_controler.lookForProfile(`email = '${user.email}'`);
-                const token = jwt.sign({ id: foundUser[0].id }, jwtSecret);
+    // login: (req, user) => {
 
-                resolve({ auth: true, token: token, message: 'user logged in successfully' });
-            });
-        })
-    },
+    //     return new Promise((resolve, reject) => {
+
+    //         req.logIn(user, async err => {
+    //             if (err) throw err
+
+    //             let foundUser = await profile_controler.lookForProfile(`email = '${user.email}'`);
+    //             const token = jwt.sign({ id: foundUser[0].id }, jwtSecret);
+
+    //             resolve({ auth: true, token: token, message: 'user logged in successfully' });
+    //         });
+
+    //     })
+
+    // },
     addNew: async ({ firstName, secondName, email, password, phone, street, city, postCode }) => {
         const isRegistered = await profile_controler.lookForProfile(`email = '${email}'`);
         if (isRegistered.length) {
