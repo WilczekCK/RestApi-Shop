@@ -7,7 +7,6 @@ var passport = require('passport')
 var jwt = require('jsonwebtoken')
 var flash = require('req-flash');
 var mysql = require('./mysql_controler');
-
 const opts = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
     secretOrKey: jwtSecret,
@@ -21,7 +20,6 @@ auth_controler = {
         return new Promise( (resolve, reject )=>{
     
             passport.authenticate('jwt', { session: false }, async(err, user, info) => {
-                
                 if(err) {
                     console.log(err);
                     reject(err)
@@ -45,14 +43,34 @@ auth_controler = {
     
     },
 
-},
-    // register: {
+    login: (req, res, next) => {
 
-    // },
-    // forgotPassword: {
+        return new Promise( (resolve, reject )=>{
+
+            passport.authenticate('local-login', async (err, user, info) => {
+
+                if(err) {
+                    console.log(err);
+                    reject(err);
+                }
+                if(info != undefined) {
+                    res.status(401).send(info.message);
+                    reject(info.message);
+                } 
+                else {
+                    req.logIn(user, async err => {
+                        if (err) throw err
         
-    // }
+                        let foundUser = await profile.lookForProfile(`email = '${user.email}'`);
+                        const token = jwt.sign({ id: foundUser[0].id }, jwtSecret);
+        
+                        resolve({ auth: true, token: token, message: 'user logged in successfully' });
+                    });
+                }
+            })(req, res, next);
 
-
+        } )
+    }
+},
 
 module.exports = auth_controler || 'Auth Controler Problem!';
