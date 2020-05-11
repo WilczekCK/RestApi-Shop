@@ -16,20 +16,9 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res, next) => {
-    await passport.authenticate('local-login', async (err, user, info) => {
-      if (err) {
-        console.log(err);
-      }
-
-      if (info != undefined) {
-        res.status(401).send(info.message);
-      } else {
-        profile.login(req, user)
-        .then(function(isLoggedIn){
-          res.status(200).send(isLoggedIn);
-        })
-      }
-  })(req, res, next);
+  auth.login(req, res, next).then( isLoggedIn => {
+      res.send( isLoggedIn );
+  }, err => console.log(err) )
 });
 
 router.get('/details', function (req, res, next) { }); //get
@@ -42,6 +31,13 @@ router.patch('/details', async function (req, res, next) {
 router.delete('/delete', async function (req, res, next) {
   const deletionResponse = await profile.remove(req.body);
   res.status(deletionResponse.status).send(deletionResponse);
+});
+
+router.get('/findUser', async(req, res, next) => {
+  auth.authenticate(req, res, next).then( async(userId)=> {
+    const response = await profile.lookForProfile(`id = ${userId}`)
+    res.status(200).send(response);
+  }, err => console.log(err) )
 });
 
 module.exports = router;
