@@ -7,6 +7,7 @@ var passport = require('passport')
 var jwt = require('jsonwebtoken')
 var flash = require('req-flash');
 var mysql = require('./mysql_controler');
+var profile = require('./profile_controler')
 const opts = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT'),
     secretOrKey: jwtSecret,

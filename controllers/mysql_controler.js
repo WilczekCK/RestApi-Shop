@@ -26,7 +26,7 @@ mysql_controler = {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
     insert: (table, rowNames, rowsInfo) => {
-        mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`);
+        return mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
     },
     update: async (table, changingRows, condition) => {
         //changingrows = {row = newValue, row2 = newValue2})
@@ -37,6 +37,12 @@ mysql_controler = {
     },
     delete: async (table, condition) => {
         if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
+        else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition}`);
+
+        return true;
+    },
+    deleteWithAuth: async (table, condition) => {
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition.id}, user_id = ${condition.userId}`))) return false;
         else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition}`);
 
         return true;
