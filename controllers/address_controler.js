@@ -8,13 +8,15 @@ var address_controler = address_controler || {}
 address_controler = {
 
     addAddress: async ({ address, post_code, city, userId }) => {
-        const alreadyAdress = await address_controler.lookForAddress(`address = '${address}'`);
-        if (isRegistered.length) {
-            return { status: 409, message: 'Address already exists!' }
-        } else {
+        // const alreadyAdress = await address_controler.showAll( {adress, userId} );
+        console.log(userId);
+        console.log(address);
+        // if (alreadyAdress.length) {
+            // return { status: 409, message: 'Address already exists!' }
+        // } else {
             if ( address || post_code || city || userId ) {
-                mysql.insert('adressess',
-                    'address, post_code, city, userId',
+                mysql.insert('addresses',
+                    'address, post_code, city, user_id',
                     `'${address}', '${post_code}', '${city}', '${userId}'`
                 )
 
@@ -22,7 +24,7 @@ address_controler = {
             } else {
                 return { status: 400, message: 'You are missing one of the parameters' }
             }
-        }
+        // }
     },
     removeAddress: async ({ id, userId }) => {
         if (!id) return { status: 406, message: 'Provide the ID of an adress you want to remove!' };
