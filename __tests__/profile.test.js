@@ -2,6 +2,7 @@
 const request = require('supertest');
 const http = require('http');
 const server = require('../app.js');
+//const mysql = require('../controllers/mysql_controler.js');
 
 beforeAll(async () => {
     // do something before anything else runs
@@ -28,6 +29,8 @@ describe('Profile test', () => {
             postCode: '21-231'
             })
             .expect(200);
+
+            //id = await mysql.showCertain(`users`, `id`, `email = 'adam.kowalsky@gmail.com'`);
     });
 
     test('Is added profile possible to login "POST account/login"', async () => {
@@ -39,6 +42,4 @@ describe('Profile test', () => {
             })
             .expect(200)
     })
-
-
 });
