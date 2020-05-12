@@ -2,7 +2,8 @@
 const request = require('supertest');
 const http = require('http');
 const server = require('../app.js');
-//const mysql = require('../controllers/mysql_controler.js');
+const mysql = require('../controllers/mysql_controler.js');
+let testUserID;
 
 beforeAll(async () => {
     // do something before anything else runs
@@ -30,7 +31,8 @@ describe('Profile test', () => {
             })
             .expect(200);
 
-            //id = await mysql.showCertain(`users`, `id`, `email = 'adam.kowalsky@gmail.com'`);
+            id = await mysql.showCertain(`users`, `id`, `email = 'adam.kowalsky@gmail.com'`);
+            testUserID = id[0].id;
     });
 
     test('Is added profile possible to login "POST account/login"', async () => {
@@ -41,5 +43,15 @@ describe('Profile test', () => {
                 password: 'TestingPurposes12!'
             })
             .expect(200)
+    })
+
+    test('Is possible to change information in some profile "PATCH account/details', async () => {
+        await request(server)
+            .patch('/account/details')
+            .send({
+                id: testUserID,
+                rowsToChange: `email = 'adam.kowalski@gmail.com'`
+            })
+            .expect(200);
     })
 });
