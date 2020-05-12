@@ -28,16 +28,22 @@ profile_controler = {
             return { status: 409, message: 'Account with that email is already registered!' }
         } else {
             if (firstName || secondName || email || password || phone || street || city || postCode) {
-
+                
                 mysql.insert('users',
-                    'name, surname, email, password, phone', 
+                    'name, surname, email, password, phone',
                     `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}`
-                ).then( ( queryResponse ) => {
+                ).then( ( userResponse ) => {
                     
-                mysql.insert('addresses', 
-                    'city, address, post_code, user_id', 
-                    `'${city}', '${street}', '${postCode}', ${queryResponse.insertId}`)
+                return mysql.insert('addresses', 
+                    'city, address, post_code, user_id',
+                    `'${city}', '${street}', '${postCode}', ${userResponse.insertId}`)
+                }).then( ( addressResponse ) => {
+                    mysql.update('users', 
+                        `default_address = ${addressResponse.insertId}`, 
+                        `email = "${email}"`
+                    )    
                 })
+                
 
                 return { status: 200, message: 'You are registered succesfully!'  };
             } else {
