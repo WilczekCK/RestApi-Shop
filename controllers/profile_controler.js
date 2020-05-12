@@ -30,16 +30,16 @@ profile_controler = {
             if (firstName || secondName || email || password || phone || street || city || postCode) {
 
                 mysql.insert('users',
-                    'name, surname, email, password, phone',
+                    'name, surname, email, password, phone', 
                     `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}`
                 ).then( ( queryResponse ) => {
                     
                 mysql.insert('addresses', 
-                    'city, address, post_code, user_id',
+                    'city, address, post_code, user_id', 
                     `'${city}', '${street}', '${postCode}', ${queryResponse.insertId}`)
                 })
 
-                return { status: 200, message: 'You are registered succesfully!' };
+                return { status: 200, message: 'You are registered succesfully!'  };
             } else {
                 return { status: 400, message: 'You are missing one of the parameters' }
             }

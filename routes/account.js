@@ -34,7 +34,7 @@ router.delete('/delete', async function (req, res, next) {
 });
 
 router.get('/findUser', async(req, res, next) => {
-  auth.authenticate(req, res, next).then( async(userId)=> {
+  auth.authenticate(req, res, next).then(async(userId)=> {
     const response = await profile.lookForProfile(`id = ${userId}`)
     res.status(200).send(response);
   }, err => console.log(err) )
