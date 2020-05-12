@@ -89,4 +89,13 @@ describe('Profile test', () => {
                 }
             })
     })
+
+    test('Is possible to remove an account "/account/remove"', async () => {
+        await request(server)
+            .delete('/account/delete')
+            .send({
+                id: testUserID,
+            })
+            .expect(200)
+        })
 });
