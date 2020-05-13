@@ -15,7 +15,7 @@ mysql_controler = {
             connection.connect();
     
             connection.query(queryInfo, function (err, rows, fields) {
-                if (err) throw err  
+                if (err) return reject(err);
                 resolve(rows);
             })
     
@@ -48,7 +48,6 @@ mysql_controler = {
         return true;
     },
     showCertain: async (table, condition, rules) => {
-        console.log(`SELECT ${condition} FROM ${table} WHERE ${rules}`)
         return await mysql_controler.query(`SELECT ${condition} FROM ${table} WHERE ${rules}`);
     }
 }

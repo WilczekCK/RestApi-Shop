@@ -10,6 +10,7 @@ order_controler = {
     createOrder: async ({customerId, productsOrdered}) => {
         if(!customerId || !productsOrdered) return {status: 400, message:'You are missing one of the parameters'};
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
+
         return {customerId: customerId, productsOrdered: productsOrdered, summaryPrice: summaryPrice};
     },
     removeOrder: () => {
@@ -19,15 +20,19 @@ order_controler = {
 
     },
     sumPrice: async (productsOrdered) => {
-        const productsInfo = await mysql.showCertain('products', 'price, name, vat_percentage', `id IN (${productsOrdered})`)
-        let priceSummary = 0;
-
-        _.each(productsInfo, async ({price, name, vat_percentage}) => {
-            //without percentage included
-            return priceSummary = priceSummary + price;
-        })
-
-        return priceSummary;
+        try{
+            const productsInfo = await mysql.showCertain('products', 'price, name, vat_percentage', `id IN (${productsOrdered})`)
+            let priceSummary = 0;
+            
+            _.each(productsInfo, async ({price, name, vat_percentage}) => {
+                //without percentage included
+                return priceSummary = priceSummary + price;
+            })
+    
+            return {withoutVat: priceSummary, withVat: ((priceSummary) * 1.23)};
+        }catch(error){
+            return {status: 406, message:'Error while summary of products!'}
+        }
     },
     setStatus: (status) => {
         
