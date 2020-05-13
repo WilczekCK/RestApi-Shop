@@ -29,6 +29,11 @@ order_controler = {
                 priceSummary: 0
             };
 
+            if (_.contains(products.idArray, undefined)
+                || _.contains(products.amountArray, undefined)
+                || _.contains(products.priceArray, undefined))
+                return { status: 406, message: 'You are missing one of the parameters' };
+
             return products;
         } catch (error) {
             return { status: 406, message: 'Error while creating table for summary' }
@@ -36,11 +41,19 @@ order_controler = {
     },
     sumPrice: async (productsOrdered) => {
         try {
-            const products = await order_controler.prepareArray(productsOrdered);
-            console.log(products)
-            //return { status: 200, message: { withoutVat: priceSummary, withVat: ((priceSummary) * 1.23) } };
+            const {idArray, priceArray, amountArray} = await order_controler.prepareArray(productsOrdered);
+            var priceSummary = 0;
+
+            let queue = 0;
+            idArray.forEach(id => {
+                priceSummary = priceSummary + (priceArray[queue] * amountArray[queue])
+                queue++;
+            })
+
+            
+            return { status: 200, message: { withoutVat: priceSummary, withVat: ((priceSummary) * 1.23) } };
         } catch (error) {
-            //return { status: 406, message: 'Error while summary of products!' }
+            return { status: 406, message: 'Error while summary of products!' }
         }
     },
     setStatus: (status) => {
