@@ -18,7 +18,7 @@ router.delete('/remove', function(req, res, next) {
 
 router.post('/create', async function(req, res, next) {
     const orderResponse = await order.createOrder(req.body);
-    res.status(200).send(orderResponse);
+    res.status(orderResponse.status).send(orderResponse);
 });
 
 module.exports = router;

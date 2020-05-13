@@ -11,7 +11,7 @@ order_controler = {
         if(!customerId || !productsOrdered) return {status: 400, message:'You are missing one of the parameters'};
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
 
-        return {customerId: customerId, productsOrdered: productsOrdered, summaryPrice: summaryPrice};
+        return {status: summaryPrice.status, customerId: customerId, productsOrdered: productsOrdered, summaryPrice: summaryPrice.message};
     },
     removeOrder: () => {
 
@@ -29,7 +29,7 @@ order_controler = {
                 return priceSummary = priceSummary + price;
             })
     
-            return {withoutVat: priceSummary, withVat: ((priceSummary) * 1.23)};
+            return {status: 200, message: {withoutVat: priceSummary, withVat: ((priceSummary) * 1.23)}};
         }catch(error){
             return {status: 406, message:'Error while summary of products!'}
         }
