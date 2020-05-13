@@ -36,7 +36,7 @@ describe('Product test', () => {
         await request(server)
             .get('/product/Test')
             .expect(function(res){
-                expect(res.body[0].name).toEqual('Test')
+                expect(res.body[0].name).toEqual('TestChanged')
             })
     })
 
