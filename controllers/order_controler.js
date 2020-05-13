@@ -21,20 +21,13 @@ order_controler = {
     },
     prepareArray: async (productsOrdered) => {
         try {
+            const productsInfo = await mysql.showCertain('products', 'price', `id IN (${_.pluck(productsOrdered, 'productId')})`)
             let products = {
-                idArray: [],
-                amountArray: [],
-                priceArray: [],
+                idArray: _.pluck(productsOrdered, 'productId'),
+                amountArray: _.pluck(productsOrdered, 'amount'),
+                priceArray: _.pluck(productsInfo, 'price'),
                 priceSummary: 0
             };
-
-            _.each(productsOrdered, async ({productId, amount}) => {
-                products.idArray.push(productId);
-                products.amountArray.push(amount);
-            })
-
-            const productsInfo = await mysql.showCertain('products', 'price', `id IN (${products.idArray})`)
-            _.each(productsInfo, async ({price}) => products.priceArray.push(price));
 
             return products;
         } catch (error) {
