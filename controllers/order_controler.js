@@ -1,16 +1,15 @@
+var mysql = require('./mysql_controler');
+
 var order_controler = order_controler || {}
 order_controler = {
     onlinePayment:{
         preparePayment: () => {},
         setPaid: () => {}
     },
-    createOrder: () => {
-        var products = product_controler.checkProducts(id);
-        var price = online_controler.sumPrice();
-
-        //dosmth
-
-        product_controler.setStatus(id);
+    createOrder: ({customerId, productsOrdered}) => {
+        if(!customerId || !productsOrdered) return {status: 400, message:'You are missing one of the parameters'};
+        const summaryPrice = order_controler.sumPrice(productsOrdered);
+        return {customerId: customerId, productsOrdered: productsOrdered, summaryPrice: summaryPrice};
     },
     removeOrder: () => {
 
@@ -18,8 +17,8 @@ order_controler = {
     changeAmount: () => {
 
     },
-    sumPrice: () => {
-
+    sumPrice: async (productsOrdered) => {
+        const productsInfo = await mysql.showCertain('products', 'price, name, vat_percentage', `id IN (${productsOrdered})`)
     },
     setStatus: (status) => {
         
