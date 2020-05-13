@@ -6,7 +6,8 @@ var payment = require('../controllers/payment_controler.js');
 router.post('/sendorder', function(req, res){
     
     payment.createOrder(req, res).then( info => {
-        //info has order id from payu
+        // info has order id from payu
+        // order.create( id )
         res.status(200).send( info )
     }, err => res.status(500).send({msg: 'Nie udało się ukończyć płatności'}) )
     
@@ -15,10 +16,10 @@ router.post('/sendorder', function(req, res){
 // requests from payu
 router.post('/info', function(req, res){
     
-    payment.createOrder(req, res).then( info => {
-        res.status(200).send( info )
-    }, err => res.status(500).send({msg: 'Nie udało się ukończyć płatności'}) )
-    
+    // req.body.order.orderId
+    // req.body.order.status
+    console.log( req.body.order)
+    res.status(200).send( "OK" )
 })
 
 module.exports = router;

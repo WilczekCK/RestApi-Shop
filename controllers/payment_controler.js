@@ -5,11 +5,24 @@ var axios = require('axios');
 var payment_controler = payment_controler || {}
 payment_controler = {
 
-  getToken: () => {
+  createOrder: async( req, res ) => {
 
+    return payment_controler.getToken()
+
+    .then( ( tokenResponse ) => {
+      const token = tokenResponse.data.access_token;
+      return payment_controler.sendOrder(token, req, res);
+    })
+    
+  },
+
+  changePaymentStatus: ( { status, orderId } ) => {
+    mysql.update('orders', `status = `, condition)
+  },
+
+  getToken: () => {
       const url = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize?grant_type=client_credentials&client_id=386221&client_secret=b7f9cadd7c9fdb3d73c9ea02a23287ac';
       return axios.post( url );
-
   },
   
   sendOrder: (token, req, res) => {
@@ -31,14 +44,7 @@ payment_controler = {
           description: "Zdowozem.pl",   
           currencyCode : "PLN",
           products : payment_controler.transformCartPayu(req.body.cart),
-          // buyer : {
-              // email : req.body.email ,
-          // }
-          //   phone : "654111654",
-          //   firstName : "John",
-          //   lastName : "Doe",
-          //   language : "en"
-          // },
+          // extOrderId:"238qovbn8pwxbxoeec3dsy",
         },
   
       }, 
@@ -51,22 +57,10 @@ payment_controler = {
     })
   },
 
-  createOrder: async( req, res ) => {
-    
-    console.log(req.body.price * 100)
-    console.log(payment_controler.transformCartPayu(req.body.cart))
-
-    return payment_controler.getToken()
-    .then( ( tokenResponse ) => {
-      const token = tokenResponse.data.access_token;
-      return payment_controler.sendOrder(token, req, res);
-    })
-    
-  },
-
   transformCartPayu: ( cart ) => {
     
     return cart.map( prod => {
+      
       return{
         name: prod.name,
         unitPrice: +prod.price,
@@ -75,15 +69,7 @@ payment_controler = {
       
     })
 
-  //         {
-  //           name : "Wireless Mouse for Laptop",
-  //           unitPrice : 15000,
-  //           quantity :  1 
-  //         },
-
-  }
-
-
+  },
 
 }
 
