@@ -10,6 +10,8 @@ var session = require("express-session"),
 var orderRouter = require('./routes/order');
 var accountRouter = require('./routes/account');
 var productRouter = require('./routes/product');
+var paymentRouter = require('./routes/payment');
+var addressRouter = require('./routes/address');
 var cors = require('cors');
 
 var app = express();
@@ -28,6 +30,8 @@ app.use(passport.initialize());
 app.use('/order', orderRouter);
 app.use('/account', accountRouter);
 app.use('/product', productRouter);
+app.use('/payment', paymentRouter);
+app.use('/address', addressRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {xw
