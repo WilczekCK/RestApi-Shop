@@ -35,22 +35,7 @@ afterAll(async (done) => {
 
 describe('Address test', () => {
     
-    // test('Is error thrown if parameter is missing?  "POST address/" ', async () => {
-
-    //     await request(server)
-    //     .post('/address')
-    //     // .set('Authorization', `JWT ${token}`)
-    //     .send({
-    //         userId: 2,
-    //         // address: 'Warszawska 12',
-    //         city: 'Krakowo',
-    //         postCode: '21-231',
-    //     })
-    //     .expect( (res) => {
-    //         expect( res.body.status ).toBe(400)
-    //     } ) 
-        
-    // });
+    
 
     test('Is it possible to add the address?  "POST address/" ', async () => {
 
@@ -92,7 +77,6 @@ describe('Address test', () => {
         .get(`/address/${testAddressId}`)
         .set('Authorization', `JWT ${token}`)
         .expect( res => {
-            console.log(res.body)
             expect( res.status ).toBe(200)
         } ) 
         
@@ -105,7 +89,7 @@ describe('Address test', () => {
         .patch('/address/details')
         .set('Authorization', `JWT ${token}`)
         .send({
-            userId: 2,
+            userId: 5,
             id: testAddressId,
             rowsToChange: `post_code = '99-999'`
         })
@@ -128,6 +112,24 @@ describe('Address test', () => {
         .expect( (res) => {
             console.log(res.body)
             expect( res.body.status ).toBe(200)
+        } ) 
+        
+    });
+
+    test('Is error thrown if parameter is missing?  "POST address/" ', async () => {
+
+        await request(server)
+        .post('/address')
+        .set('Authorization', `JWT ${token}`)
+        .send({
+            userId: 5,
+            // address: 'Warszawska 12',
+            city: 'Krakowo',
+            postCode: '21-231',
+        })
+        .expect( (res) => {
+            console.log(res.body)
+            expect( res.body.status ).toBe( 400 )
         } ) 
         
     });

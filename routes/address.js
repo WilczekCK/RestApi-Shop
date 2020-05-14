@@ -4,7 +4,6 @@ var address = require('../controllers/address_controler.js');
 var auth = require('../controllers/auth_controler.js');
 
 let userId;
-let addressId;
 
 router.all('*', async function(req, res, next){
     await auth.authenticate(req, res).then( async(userID)=> {
@@ -20,7 +19,6 @@ router.get('/', async function(req, res, next) {
 
 router.post('/', async (req, res, next) => {
         const isNewAddressAdded = await address.addAddress( req.body );
-        addressId = isNewAddressAdded.rows.insertId;
         res.status(isNewAddressAdded.status).send(isNewAddressAdded);
 });
 

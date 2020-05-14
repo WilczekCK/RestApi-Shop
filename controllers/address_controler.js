@@ -30,7 +30,6 @@ address_controler = {
 
         // if (!_.isEmpty(isAddressInDb)) {
         const rows = await mysql.deleteWithAuth( 'addresses', {id: id, userId: userId} );
-        console.log(rows);
         return { status: 200, message: 'You successfully removed this address!', rows };
         // } else {
         //     return { status: 404, message: 'User not found in db' };
@@ -41,9 +40,11 @@ address_controler = {
         if (!id || !rowsToChange) return { status: 400, message: 'You are missing one of the parameters' }
         // const isUserInDb = await mysql.showCertain( 'addresses', '*', `id = ${id}, userId = ${userId}`);
 
-        const rows = mysql.update('addresses', rowsToChange, `id = ${id} AND user_id = ${userId}`);
-
-        return { status: 200, message: 'You successfully changed info of this user!', rows };
+        const rows = await mysql.update('addresses', rowsToChange, `id = ${id} AND user_id = ${userId}`);
+        if( rows.affectedRows)
+            return { status: 200, message: 'You successfully changed info of this address!', rows };
+        else
+            return { status: 401, message: 'Address not changed!', rows };
 
     },
     lookForAddress: async ( { id, userId } ) => {
@@ -56,7 +57,7 @@ address_controler = {
     showAll: async ( {userId} ) => {
         const rows = await mysql.showCertain('addresses', '*', `user_id = ${userId}`)
         if( rows.length > 0 )
-            return { status: 200, message: 'You successfully changed info of this user!', rows }
+            return { status: 200, message: 'You successfully got rows', rows }
         else 
             return { status: 404, message: 'There is no addresses that match this query'}
         },
