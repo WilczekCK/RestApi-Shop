@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var order = require('../controllers/order_controler.js');
 
 router.get('/', function(req, res, next) {
     //summary or certain if id provided
@@ -15,8 +16,9 @@ router.delete('/remove', function(req, res, next) {
     res.status(200).end()
 });
 
-router.post('/create', function(req, res, next) {
-    res.status(200).end()
+router.post('/create', async function(req, res, next) {
+    const orderResponse = await order.createOrder(req.body);
+    res.status(orderResponse.status).send(orderResponse);
 });
 
 module.exports = router;
