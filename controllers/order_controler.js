@@ -1,5 +1,6 @@
 var mysql = require('./mysql_controler');
 var _ = require('underscore');
+var moment = require('moment');
 
 var order_controler = order_controler || {}
 order_controler = {
@@ -8,10 +9,31 @@ order_controler = {
         setPaid: () => { }
     },
     createOrder: async ({ customerId, productsOrdered }) => {
-        if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' };
+        if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
+        
+        let orderDetails = {
+            status: summaryPrice.status,
+            orderId: 0,
+            customerId: customerId,
+            productsOrdered: productsOrdered,
+            summaryPrice: summaryPrice.message 
+        }
 
-        return { status: summaryPrice.status, customerId: customerId, productsOrdered: productsOrdered, summaryPrice: summaryPrice.message };
+        await mysql.insert('orders', 
+            'user_id, date, status', 
+            `${customerId}, '${moment().format("YYYY-MM-DD HH:mm:ss")}', 0`)
+        .then( ({insertId})  => {
+            productsOrdered.forEach(product => {
+                mysql.insert('order_detail',
+                'order_id, product_id, amount',
+                `${insertId}, ${product.productId}, ${product.amount}`)
+            })
+            
+            orderDetails.orderId = insertId;
+        })
+
+        return orderDetails;
     },
     removeOrder: () => {
 
@@ -45,7 +67,7 @@ order_controler = {
             var priceSummary = 0;
 
             let queue = 0;
-            idArray.forEach(id => {
+            idArray.forEach( _ => {
                 priceSummary = priceSummary + (priceArray[queue] * amountArray[queue])
                 queue++;
             })

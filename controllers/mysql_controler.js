@@ -26,6 +26,7 @@ mysql_controler = {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
     insert: (table, rowNames, rowsInfo) => {
+        console.log(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
         return mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
     },
     update: async (table, changingRows, condition) => {
