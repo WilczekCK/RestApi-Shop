@@ -11,35 +11,35 @@ order_controler = {
     createOrder: async ({ customerId, productsOrdered }) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
-        
+
         let orderDetails = {
             status: summaryPrice.status,
             orderId: 0,
             customerId: customerId,
             productsOrdered: productsOrdered,
-            summaryPrice: summaryPrice.message 
+            summaryPrice: summaryPrice.message
         }
 
-        await mysql.insert('orders', 
-            'user_id, date, status', 
+        await mysql.insert('orders',
+            'user_id, date, status',
             `${customerId}, '${moment().format("YYYY-MM-DD HH:mm:ss")}', 0`)
-        .then( ({insertId})  => {
-            productsOrdered.forEach(product => {
-                mysql.insert('order_detail',
-                'order_id, product_id, amount',
-                `${insertId}, ${product.productId}, ${product.amount}`)
+            .then(({ insertId }) => {
+                productsOrdered.forEach(product => {
+                    mysql.insert('order_detail',
+                        'order_id, product_id, amount',
+                        `${insertId}, ${product.productId}, ${product.amount}`)
+                })
+
+                orderDetails.orderId = insertId;
             })
-            
-            orderDetails.orderId = insertId;
-        })
 
         return orderDetails;
     },
-    removeOrder: () => {
+    removeOrder: ({ customerId, orderId }) => {
+        if(!customerId || !orderId) return { status: 406, message: 'You are missing one of the parameters' };
 
-    },
-    changeAmount: () => {
-
+        const {id, user_id} = mysql.showCertain('orders', '*', `user_id = '${customerId}' AND order_id = '${orderId}'`)
+        console.log([id, user_id])
     },
     prepareArray: async (productsOrdered) => {
         try {
@@ -63,16 +63,16 @@ order_controler = {
     },
     sumPrice: async (productsOrdered) => {
         try {
-            const {idArray, priceArray, amountArray} = await order_controler.prepareArray(productsOrdered);
+            const { idArray, priceArray, amountArray } = await order_controler.prepareArray(productsOrdered);
             var priceSummary = 0;
 
             let queue = 0;
-            idArray.forEach( _ => {
+            idArray.forEach(_ => {
                 priceSummary = priceSummary + (priceArray[queue] * amountArray[queue])
                 queue++;
             })
 
-            
+
             return { status: 200, message: { withoutVat: priceSummary, withVat: ((priceSummary) * 1.23) } };
         } catch (error) {
             return { status: 406, message: 'Error while summary of products!' }

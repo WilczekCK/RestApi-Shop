@@ -12,8 +12,9 @@ router.patch('/', function(req, res, next) {
     res.status(200).end()
 });
 
-router.delete('/remove', function(req, res, next) {
-    res.status(200).end()
+router.delete('/remove', async function(req, res, next) {
+    const removeResponse = await order.removeOrder(req.body);
+    res.status(removeResponse.status).send(removeResponse);
 });
 
 router.post('/create', async function(req, res, next) {
