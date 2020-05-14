@@ -17,13 +17,11 @@ address_controler = {
                     'address, post_code, city, user_id',
                     `'${address}', '${postCode}', '${city}', '${userId}'`
                 )
-                console.log(rows)
                 return { status: 200, message: 'Address added succesfully!', rows: rows };
             }
         // }
     },
     removeAddress: async ({ id, userId }) => {
-        console.log({ id, userId })
 
         if (!id) return { status: 406, message: 'Provide the ID of an adress you want to remove!' };
         // const isAddressInDb = await mysql.showCertain('addresses', '*', `id = ${id}`);
@@ -36,7 +34,6 @@ address_controler = {
         // }
     },
     changeDetails: async ({ id, userId, rowsToChange }) => {
-        console.log({ id, userId, rowsToChange })
         if (!id || !rowsToChange) return { status: 400, message: 'You are missing one of the parameters' }
         // const isUserInDb = await mysql.showCertain( 'addresses', '*', `id = ${id}, userId = ${userId}`);
 

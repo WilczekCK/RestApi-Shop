@@ -50,7 +50,6 @@ describe('Address test', () => {
             postCode: '21-231',
         })
         .expect( (res) => {
-            console.log(res.body)
             testAddressId = res.body.rows.insertId;
             expect( res.body.status ).toBe(200)
         } ) 
@@ -59,12 +58,10 @@ describe('Address test', () => {
 
     test('Is it possible to get all user Addresses?  "GET address/" ', async () => {
 
-        console.log('HUJCZE')
         await request(server)
         .get('/address')
         .set('Authorization', `JWT ${token}`)
         .expect( res => {
-            console.log(res.body)
             expect( res.status ).toBe(200)
         } ) 
         
@@ -72,7 +69,6 @@ describe('Address test', () => {
 
     test('Is it possible to get specific address?  "GET address/:id" ', async () => {
 
-        console.log('HUJCZE')
         await request(server)
         .get(`/address/${testAddressId}`)
         .set('Authorization', `JWT ${token}`)
@@ -84,7 +80,6 @@ describe('Address test', () => {
     
     test('Is it possible to change Address?  "PATCH address/" ', async () => {
 
-        console.log('HUJCZE')
         await request(server)
         .patch('/address/details')
         .set('Authorization', `JWT ${token}`)
@@ -94,7 +89,6 @@ describe('Address test', () => {
             rowsToChange: `post_code = '99-999'`
         })
         .expect( (res) => {
-            console.log(res.body)
             expect( res.body.status ).toBe(200)
         } ) 
         
@@ -110,7 +104,6 @@ describe('Address test', () => {
             id: testAddressId,
         })
         .expect( (res) => {
-            console.log(res.body)
             expect( res.body.status ).toBe(200)
         } ) 
         
@@ -128,7 +121,6 @@ describe('Address test', () => {
             postCode: '21-231',
         })
         .expect( (res) => {
-            console.log(res.body)
             expect( res.body.status ).toBe( 400 )
         } ) 
         
