@@ -21,7 +21,7 @@ order_controler = {
             if(_.isNumber(limit)) limit = `LIMIT ${limit}`
             else limit = '';
 
-            const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} ORDER BY orders.date DESC ${limit}` );
+            const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} AND orders.id = order_detail.order_id ORDER BY orders.date DESC ${limit}` );
             return {status: 200, orders: orderRecords}
         },
         single: async ({order_id}) => {
