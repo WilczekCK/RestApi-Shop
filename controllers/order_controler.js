@@ -8,6 +8,15 @@ order_controler = {
         preparePayment: () => { },
         setPaid: () => { }
     },
+    display: {
+        all: async _ => {
+            const orderRecords = await mysql.show('orders, order_detail ORDER BY orders.date DESC', 'orders.*, order_detail.*');
+            return {status: 200, orders: orderRecords}
+        },
+        allFromUser: () => {},
+        single: () => { },
+        singleFromUser: () => { }
+    },
     createOrder: async ({ customerId, productsOrdered }) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
@@ -36,14 +45,14 @@ order_controler = {
         return orderDetails;
     },
     removeOrder: async ({ customerId, orderId }) => {
-        if(!customerId || !orderId) return { status: 406, message: 'You are missing one of the parameters' };
+        if (!customerId || !orderId) return { status: 406, message: 'You are missing one of the parameters' };
 
         const orderDetails = await mysql.showCertain('orders', '*', `user_id = '${customerId}' AND id = '${orderId}'`)
-        if(_.isEmpty(orderDetails)) return { status: 400, message: 'There is no order like that' };
+        if (_.isEmpty(orderDetails)) return { status: 400, message: 'There is no order like that' };
         else {
             mysql.delete('orders', orderDetails[0].id)
             mysql.query(`DELETE FROM order_detail WHERE order_id = ${orderDetails[0].id}`)
-            return { status:200, message:'You removed the order successfully!'}
+            return { status: 200, message: 'You removed the order successfully!' }
         }
     },
     prepareArray: async (productsOrdered) => {
