@@ -24,8 +24,11 @@ order_controler = {
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} ORDER BY orders.date DESC ${limit}` );
             return {status: 200, orders: orderRecords}
         },
-        single: () => {
-            console.log('single record')
+        single: async ({order_id}) => {
+            if(!order_id) return {status: 406, message:'You are missing one of the parameters'};
+
+            const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order_id} AND order_detail.order_id = ${order_id} ORDER BY orders.date DESC` );
+            return {status: 200, orders: orderRecords}
         }
     },
     createOrder: async ({ customerId, productsOrdered }) => {
