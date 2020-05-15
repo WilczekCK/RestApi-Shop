@@ -2,12 +2,22 @@ var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
 
-router.get('/', async function(req, res, next) {
-    const allOrders = await order.display.all();
-    res.status(allOrders.status).send(allOrders);
+router.get('/display/all', async function(req, res, next) {
+    const getOrder = await order.display.all(req.body);
+    res.status(getOrder.status).send(getOrder);
 });
 
-router.patch('/', function(req, res, next) {
+router.get('/display/fromUser', async function(req, res, next) {
+    const getOrder = await order.display.fromUser(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.get('/display/singleOrder', async function(req, res, next) {
+    const getOrder = await order.display.single(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.patch('/modify', function(req, res, next) {
     //id provided to change smth
     res.status(200).end()
 });

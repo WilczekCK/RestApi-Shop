@@ -9,13 +9,24 @@ order_controler = {
         setPaid: () => { }
     },
     display: {
-        all: async _ => {
-            const orderRecords = await mysql.show('orders, order_detail ORDER BY orders.date DESC', 'orders.*, order_detail.*');
+        all: async ({limit}) => {
+            if(_.isNumber(limit)) limit = `LIMIT ${limit}`
+            else limit = '';
+
+            const orderRecords = await mysql.show(`orders, order_detail ORDER BY orders.date DESC ${limit}`, `orders.*, order_detail.*`);
             return {status: 200, orders: orderRecords}
         },
-        allFromUser: () => {},
-        single: () => { },
-        singleFromUser: () => { }
+        fromUser: async ({user_id, limit}) => {
+            if(!user_id) return {status: 406, message:'You are missing one of the parameters'};
+            if(_.isNumber(limit)) limit = `LIMIT ${limit}`
+            else limit = '';
+
+            const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} ORDER BY orders.date DESC ${limit}` );
+            return {status: 200, orders: orderRecords}
+        },
+        single: () => {
+            console.log('single record')
+        }
     },
     createOrder: async ({ customerId, productsOrdered }) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
