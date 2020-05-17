@@ -13,7 +13,7 @@ router.all('*', async function(req, res, next){
 })
 
 router.get('/', async function(req, res, next) {
-    const allAddresses = address.showAll( {userId:userId} );
+    const allAddresses = await address.showAll( {userId:userId} );
     res.send(allAddresses)
 });
 
