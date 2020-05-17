@@ -23,18 +23,15 @@ profile_controler = {
 
     // },
     addNew: async ({ firstName, secondName, email, password, phone, street, city, postCode }) => {
-        const isRegistered = await profile_controler.lookForProfile(`email = "${email}"`);
+        const isRegistered = await profile_controler.lookForProfile(`email = '${email}'`);
         if (isRegistered.length) {
             return { status: 409, message: 'Account with that email is already registered!' }
         } else {
-            if (!firstName || !secondName || !email || !password || !phone || !street || !city || !postCode) {
-                return { status: 400, message: 'You are missing one of the parameters' }
+            if (firstName || secondName || email || password || phone || street || city || postCode) {
                 
-
-            } else {
                 mysql.insert('users',
-                    'name, surname, email, password, phone, default_address',
-                    `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}, 0`
+                    'name, surname, email, password, phone',
+                    `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}`
                 ).then( ( userResponse ) => {
                     
                 return mysql.insert('addresses', 
@@ -45,10 +42,12 @@ profile_controler = {
                         `default_address = ${addressResponse.insertId}`, 
                         `email = "${email}"`
                     )    
-                    return { status: 200, message: 'You are registered succesfully!'  };
                 })
-
                 
+
+                return { status: 200, message: 'You are registered succesfully!'  };
+            } else {
+                return { status: 400, message: 'You are missing one of the parameters' }
             }
         }
     },
@@ -76,6 +75,10 @@ profile_controler = {
     },
     lookForProfile: async (condition) => {
         const info = await mysql.showCertain('users', '*', `${condition}`);
+        return info;
+    },
+    lookForProfileNoPass: async (condition) => {
+        const info = await mysql.showCertain('users', 'email, phone, name, surname, default_address', `${condition}`);
         return info;
     }
 }
