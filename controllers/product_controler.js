@@ -27,11 +27,11 @@ product_controler = {
         }
     },
     changeDetails: async ({ rowsToChange, condition }) => {
-        if (rowsToChange || condition) {
+        if (!rowsToChange || !condition) {
+            return { status: 400, message: 'One of the fields are missing!' };
+        } else {
             await mysql.update('products', `${rowsToChange}`, `${condition}`)
             return { status: 200, message: 'You successfully updated the product!' };
-        } else {
-            return { status: 400, message: 'One of the fields are missing!' };
         }
     }
 }

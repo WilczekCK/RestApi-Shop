@@ -2,18 +2,29 @@ var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
 
-router.get('/', function(req, res, next) {
-    //summary or certain if id provided
-    res.status(200).end()
+router.get('/display/all', async function(req, res, next) {
+    const getOrder = await order.display.all(req.body);
+    res.status(getOrder.status).send(getOrder);
 });
 
-router.patch('/', function(req, res, next) {
-    //id provided to change smth
-    res.status(200).end()
+router.get('/display/fromUser', async function(req, res, next) {
+    const getOrder = await order.display.fromUser(req.body);
+    res.status(getOrder.status).send(getOrder);
 });
 
-router.delete('/remove', function(req, res, next) {
-    res.status(200).end()
+router.get('/display/singleOrder', async function(req, res, next) {
+    const getOrder = await order.display.single(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.patch('/modify', async function(req, res, next) {
+    const modifyResponse = await order.setStatus(req.body);
+    res.status(modifyResponse.status).send(modifyResponse);
+});
+
+router.delete('/remove', async function(req, res, next) {
+    const removeResponse = await order.removeOrder(req.body);
+    res.status(removeResponse.status).send(removeResponse);
 });
 
 router.post('/create', async function(req, res, next) {

@@ -21,7 +21,7 @@ router.post('/login', async (req, res, next) => {
   }, err => console.log(err) )
 });
 
-router.get('/details', function (req, res, next) { }); //get
+// router.get('/details', function (req, res, next) { }); //get
 
 router.patch('/details', async function (req, res, next) {
   const changeResponse = await profile.changeInfo(req.body);
@@ -33,9 +33,9 @@ router.delete('/delete', async function (req, res, next) {
   res.status(deletionResponse.status).send(deletionResponse);
 });
 
-router.get('/findUser', async(req, res, next) => {
+router.get('/details', async(req, res, next) => {
   auth.authenticate(req, res, next).then(async(userId)=> {
-    const response = await profile.lookForProfile(`id = ${userId}`)
+    const response = await profile.lookForProfileNoPass(`id = ${userId}`) // No password in response
     res.status(200).send(response);
   }, err => console.log(err) )
 });
