@@ -15,7 +15,7 @@ mysql_controler = {
             connection.connect();
     
             connection.query(queryInfo, function (err, rows, fields) {
-                if (err) throw err
+                if (err) return reject(err);
                 resolve(rows);
             })
     
@@ -25,8 +25,8 @@ mysql_controler = {
     show: async (table, condition) => {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
-    insert: async (table, rowNames, rowsInfo) => {
-        return await mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
+    insert: (table, rowNames, rowsInfo) => {
+        return mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
     },
     update: async (table, changingRows, condition) => {
         //changingrows = {row = newValue, row2 = newValue2})
