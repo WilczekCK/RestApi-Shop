@@ -76,6 +76,10 @@ profile_controler = {
     lookForProfile: async (condition) => {
         const info = await mysql.showCertain('users', '*', `${condition}`);
         return info;
+    },
+    lookForProfileNoPass: async (condition) => {
+        const info = await mysql.showCertain('users', 'email, phone, name, surname, default_address', `${condition}`);
+        return info;
     }
 }
 

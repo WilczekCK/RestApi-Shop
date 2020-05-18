@@ -15,7 +15,7 @@ mysql_controler = {
             connection.connect();
     
             connection.query(queryInfo, function (err, rows, fields) {
-                if (err) throw err  
+                if (err) throw err
                 resolve(rows);
             })
     
@@ -25,15 +25,13 @@ mysql_controler = {
     show: async (table, condition) => {
         return await mysql_controler.query(`SELECT ${condition} FROM ${table}`);
     },
-    insert: (table, rowNames, rowsInfo) => {
-        return mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
+    insert: async (table, rowNames, rowsInfo) => {
+        return await mysql_controler.query(`INSERT INTO ${table} (${rowNames}) VALUES (${rowsInfo})`)
     },
     update: async (table, changingRows, condition) => {
         //changingrows = {row = newValue, row2 = newValue2})
         if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `${condition}`))) return false;
-        else await mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
-        
-        return true;
+        return await mysql_controler.query(`UPDATE ${table} SET ${changingRows} WHERE ${condition}`);
     },
     delete: async (table, condition) => {
         if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition}`))) return false;
@@ -42,8 +40,8 @@ mysql_controler = {
         return true;
     },
     deleteWithAuth: async (table, condition) => {
-        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition.id}, user_id = ${condition.userId}`))) return false;
-        else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition}`);
+        if(_.isEmpty(await mysql_controler.showCertain(`${table}`, `*`, `id = ${condition.id} AND user_id = ${condition.userId}`))) return false;
+        else await mysql_controler.query(`DELETE FROM ${table} WHERE id = ${condition.id} AND user_id = ${condition.userId}`);
 
         return true;
     },

@@ -25,7 +25,12 @@ auth_controler = {
                     console.log(err);
                     reject(err)
                 }
-                if(req.body.id !== user.id ){
+                // if(req.body.id !== user.id ){
+                const condition = user.id ? user.id : user 
+                
+                if( ( Object.keys(req.body).length === 0 ) && req.body.id !== user.id ){
+                    console.log("req.body.id !== user.id")
+                    console.log(req.body.id +" !== "+ user)
                     res.status(401).send('Authorization error');
                     reject('Authorization error')
                 } 
@@ -34,8 +39,6 @@ auth_controler = {
                     reject(info.message)
                 } 
                 else{
-                    console.log(user)
-                    console.log('user')
                     resolve( user );
                 }
             })(req, res, next);
