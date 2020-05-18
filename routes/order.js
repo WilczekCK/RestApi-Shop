@@ -17,9 +17,9 @@ router.get('/display/singleOrder', async function(req, res, next) {
     res.status(getOrder.status).send(getOrder);
 });
 
-router.patch('/modify', function(req, res, next) {
-    //id provided to change smth
-    res.status(200).end()
+router.patch('/modify', async function(req, res, next) {
+    const modifyResponse = await order.setStatus(req.body);
+    res.status(modifyResponse.status).send(modifyResponse);
 });
 
 router.delete('/remove', async function(req, res, next) {
