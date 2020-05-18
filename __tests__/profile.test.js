@@ -46,53 +46,67 @@ describe('Profile test', () => {
                 username: 'adam.kowalsky@gmail.com',
                 password: 'TestingPurposes12!'
             })
-            .expect(200)
-    })
-
-    test('Is possible to change information in some profile "PATCH account/details', async () => {
-        await request(server)
-            .patch('/account/details')
-            .send({
-                id: testUserID,
-                rowsToChange: `email = 'adam.kowalski@gmail.com'`
-            })
-            .expect(200);
-    })
-
-    test('Is possible to check existing user information and login to account "/account/findUser"', async () => {
-        await request(server)
-            .post('/account/login')
-            .send({
-                username: 'adam.kowalski@gmail.com',
-                password: 'TestingPurposes12!'
-            })
-            .expect(function(res){
+            .expect( res => {
+                console.log(res.body)
                 tokenReceived = res.body.token;
                 if(tokenReceived){
                     return 0;
                 }else{
                     throw new Error('Login credentials are not valid')
                 }
+                
             })
-
-        await request(server)
-            .get('/account/findUser')
-            .set('Authorization', `JWT ${tokenReceived}`)
-            .expect(function(res){
-                const {body} = res;
-                if(body[0].email === 'adam.kowalski@gmail.com'){
-                    return 0;
-                }else if(body[0].email !== 'adam.kowalski@gmail.com'){
-                    throw new Error('Modyfing is not correct')
-                }else if(body[0].email == undefined){
-                    throw new Error('There is no user like that')
-                }
-            })
+            .expect(200)
     })
+
+
+    
+    test('Is possible to change information in some profile "PATCH account/details', async () => {
+        await request(server)
+        .patch('/account/details')
+        .set('Authorization', `JWT ${tokenReceived}`)
+        .send({
+            id: testUserID,
+            rowsToChange: `email = 'adam.kowalski@gmail.com'`
+        })
+        .expect(200);
+    })
+    
+    // test('Is possible to check existing user information and login to account "/account/findUser"', async () => {
+    //     await request(server)
+    //         .post('/account/login')
+    //         .send({
+    //             username: 'adam.kowalski@gmail.com',
+    //             password: 'TestingPurposes12!'
+    //         })
+    //         .expect(function(res){
+    //             tokenReceived = res.body.token;
+    //             if(tokenReceived){
+    //                 return 0;
+    //             }else{
+    //                 throw new Error('Login credentials are not valid')
+    //             }
+    //         })
+
+    //     await request(server)
+    //         .get('/account/details')
+    //         .set('Authorization', `JWT ${tokenReceived}`)
+    //         .expect(function(res){
+    //             const {body} = res;
+    //             if(body[0].email === 'adam.kowalski@gmail.com'){
+    //                 return 0;
+    //             }else if(body[0].email !== 'adam.kowalski@gmail.com'){
+    //                 throw new Error('Modyfing is not correct')
+    //             }else if(body[0].email == undefined){
+    //                 throw new Error('There is no user like that')
+    //             }
+    //         })
+    // })
 
     test('Is possible to remove an account "/account/remove"', async () => {
         await request(server)
             .delete('/account/delete')
+            .set('Authorization', `JWT ${tokenReceived}`)
             .send({
                 id: testUserID,
             })
