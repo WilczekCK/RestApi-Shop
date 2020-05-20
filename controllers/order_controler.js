@@ -42,10 +42,10 @@ order_controler = {
             if (_.isNumber(limit)) limit = `LIMIT ${limit}`
             else limit = '';
 
-            const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} AND orders.id = order_detail.order_id ORDER BY orders.date DESC ${limit}`);
+            const orderRecords = await mysql.showCertain('orders, order_detail, products','orders.*, order_detail.*, products.price',`orders.user_id = ${user_id} AND orders.id = order_detail.order_id AND order_detail.product_id = products.id ORDER BY orders.date DESC ${limit}`);
             if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
 
-            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+            const shuffledRecords = await order_controler.getUserOrderSummaries(orderRecords);
 
             return { status: 200, orders: shuffledRecords }
         },
@@ -93,18 +93,26 @@ order_controler = {
         const productsOrdered = []; 
 
         _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
-            productsOrdered.push({order_id: order_id, products: []})
+            productsOrdered.push({
+                orderId: order_id,
+                date: '',
+                price: 0,
+                amountOfProducts: 0,
+                status: 0
+            })
+        })
+        
+        orders.forEach(order => {
+            let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'orderId'), order.id);
+            //it's an array with objects, that's why we need ID to target it
+                productsOrdered[getOrderIdPosition].date = order.date;
+                productsOrdered[getOrderIdPosition].price += (order.price) * order.amount;
+                productsOrdered[getOrderIdPosition].amountOfProducts += order.amount;
+                productsOrdered[getOrderIdPosition].status = order.status;
         })
 
-        console.log(productsOrdered)
-
-        //orders.forEach(order => {
-          //  let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
-           // productsOrdered[getOrderIdPosition].products.push({
-             //   product_id: order.product_id,
-              //  amount: order.amount
-           // })
-       // })
+        
+        return productsOrdered;
     },
     createProductsArrayFromOrder: async (orders) => {
         const productsOrdered = []; 
@@ -115,6 +123,8 @@ order_controler = {
 
         orders.forEach(order => {
             let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
+            //it's an array with objects, that's why we need ID to target it
+            
             productsOrdered[getOrderIdPosition].products.push({
                 product_id: order.product_id,
                 amount: order.amount
