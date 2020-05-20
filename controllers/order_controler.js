@@ -28,13 +28,25 @@ order_controler = {
 
             return { status: 200, orders: shuffledRecords }
         },
-        fromUserSummary: async ({ user_id, limit }) => {
+        singleOrder: async ({ order_id }) => {
             if (!order_id) return { status: 406, message: 'You are missing one of the parameters' };
 
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order_id} AND order_detail.order_id = ${order_id} ORDER BY orders.date DESC`);
             if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
 
-            const shuffledRecords = await order_controler.getUserOrderSummaries(orderRecords);
+            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+            return { status: 200, orders: shuffledRecords }
+        },
+        fromUserSummary: async ({ user_id, limit }) => {
+            if (!user_id) return { status: 406, message: 'You are missing one of the parameters' };
+            if (_.isNumber(limit)) limit = `LIMIT ${limit}`
+            else limit = '';
+
+            const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} AND orders.id = order_detail.order_id ORDER BY orders.date DESC ${limit}`);
+            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
+
+            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+
             return { status: 200, orders: shuffledRecords }
         },
         
