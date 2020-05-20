@@ -24,7 +24,7 @@ order_controler = {
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} AND orders.id = order_detail.order_id ORDER BY orders.date DESC ${limit}`);
             if(!orderRecords.length) return {status: 404, message: 'User not found in db'};
 
-            const shuffledRecords = await order_controler.getOrdersArrayFromUser(orderRecords);
+            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
 
             return { status: 200, orders: shuffledRecords }
         },
@@ -32,7 +32,10 @@ order_controler = {
             if (!order_id) return { status: 406, message: 'You are missing one of the parameters' };
 
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order_id} AND order_detail.order_id = ${order_id} ORDER BY orders.date DESC`);
-            return { status: 200, orders: orderRecords }
+            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
+
+            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+            return { status: 200, orders: shuffledRecords }
         }
     },
     createOrder: async ({ customerId, productsOrdered }) => {
@@ -73,7 +76,7 @@ order_controler = {
             return { status: 200, message: 'You removed the order successfully!' }
         }
     },
-    getOrdersArrayFromUser: async (orders) => {
+    createProductsArrayFromOrder: async (orders) => {
         const productsOrdered = []; 
 
         _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
