@@ -12,7 +12,13 @@ router.get('/user', async function(req, res, next) {
     res.status(getOrder.status).send(getOrder);
 });
 
-router.get('/order', async function(req, res, next) {
+router.get('/single', async function(req, res, next) {
+    const getOrder = await order.display.single(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.get('/history', async function(req, res, next) {
+    //It's like a cart ;)
     const getOrder = await order.display.single(req.body);
     res.status(getOrder.status).send(getOrder);
 });

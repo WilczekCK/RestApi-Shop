@@ -36,7 +36,7 @@ order_controler = {
 
             const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
             return { status: 200, orders: shuffledRecords }
-        }
+        },
     },
     createOrder: async ({ customerId, productsOrdered }) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
@@ -75,6 +75,21 @@ order_controler = {
             mysql.query(`DELETE FROM order_detail WHERE order_id = ${orderDetails[0].id}`)
             return { status: 200, message: 'You removed the order successfully!' }
         }
+    },
+    getUserOrderSummaries: async (orders) => {
+        const productsOrdered = []; 
+
+        _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
+            productsOrdered.push({order_id: order_id, products: []})
+        })
+
+        orders.forEach(order => {
+            let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
+            productsOrdered[getOrderIdPosition].products.push({
+                product_id: order.product_id,
+                amount: order.amount
+            })
+        })
     },
     createProductsArrayFromOrder: async (orders) => {
         const productsOrdered = []; 
