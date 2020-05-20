@@ -44,7 +44,7 @@ payment_controler = {
           description: "Zdowozem.pl",   
           currencyCode : "PLN",
           products : payment_controler.transformCartPayu(req.body.cart),
-          // extOrderId:"238qovbn8pwxbxoeec3dsy",
+          extOrderId: req.body.orderId,
         },
   
       }, 
