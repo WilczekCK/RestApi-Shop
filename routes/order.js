@@ -2,17 +2,17 @@ var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
 
-router.get('/display/all', async function(req, res, next) {
+router.get('/all', async function(req, res, next) {
     const getOrder = await order.display.all(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
-router.get('/display/fromUser', async function(req, res, next) {
+router.get('/user', async function(req, res, next) {
     const getOrder = await order.display.fromUser(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
-router.get('/display/singleOrder', async function(req, res, next) {
+router.get('/order', async function(req, res, next) {
     const getOrder = await order.display.single(req.body);
     res.status(getOrder.status).send(getOrder);
 });
