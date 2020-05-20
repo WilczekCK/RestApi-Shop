@@ -9,7 +9,7 @@ order_controler = {
         setPaid: () => { }
     },
     display: {
-        all: async ({ limit }) => {
+        allOrders: async ({ limit }) => {
             if (_.isNumber(limit)) limit = `LIMIT ${limit}`
             else limit = '';
 
@@ -28,15 +28,16 @@ order_controler = {
 
             return { status: 200, orders: shuffledRecords }
         },
-        single: async ({ order_id }) => {
+        fromUserSummary: async ({ user_id, limit }) => {
             if (!order_id) return { status: 406, message: 'You are missing one of the parameters' };
 
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order_id} AND order_detail.order_id = ${order_id} ORDER BY orders.date DESC`);
             if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
 
-            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+            const shuffledRecords = await order_controler.getUserOrderSummaries(orderRecords);
             return { status: 200, orders: shuffledRecords }
         },
+        
     },
     createOrder: async ({ customerId, productsOrdered }) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
@@ -83,13 +84,15 @@ order_controler = {
             productsOrdered.push({order_id: order_id, products: []})
         })
 
-        orders.forEach(order => {
-            let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
-            productsOrdered[getOrderIdPosition].products.push({
-                product_id: order.product_id,
-                amount: order.amount
-            })
-        })
+        console.log(productsOrdered)
+
+        //orders.forEach(order => {
+          //  let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
+           // productsOrdered[getOrderIdPosition].products.push({
+             //   product_id: order.product_id,
+              //  amount: order.amount
+           // })
+       // })
     },
     createProductsArrayFromOrder: async (orders) => {
         const productsOrdered = []; 

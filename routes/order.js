@@ -3,23 +3,23 @@ var router = express.Router();
 var order = require('../controllers/order_controler.js');
 
 router.get('/all', async function(req, res, next) {
-    const getOrder = await order.display.all(req.body);
+    const getOrder = await order.display.allOrders(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
 router.get('/user', async function(req, res, next) {
-    const getOrder = await order.display.fromUser(req.body);
+    const getOrder = await order.display.fromUserOrders(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
 router.get('/single', async function(req, res, next) {
-    const getOrder = await order.display.single(req.body);
+    const getOrder = await order.display.singleOrder(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
 router.get('/history', async function(req, res, next) {
     //It's like a cart ;)
-    const getOrder = await order.display.single(req.body);
+    const getOrder = await order.display.fromUserSummary(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
