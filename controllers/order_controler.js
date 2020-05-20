@@ -105,7 +105,7 @@ order_controler = {
         orders.forEach(order => {
             let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'orderId'), order.id);
             //it's an array with objects, that's why we need ID to target it
-                productsOrdered[getOrderIdPosition].date = order.date;
+                productsOrdered[getOrderIdPosition].date = moment(order.date).format("YYYY-MM-DD HH:mm:ss");
                 productsOrdered[getOrderIdPosition].price += (order.price) * order.amount;
                 productsOrdered[getOrderIdPosition].amountOfProducts += order.amount;
                 productsOrdered[getOrderIdPosition].status = order.status;
@@ -124,7 +124,7 @@ order_controler = {
         orders.forEach(order => {
             let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
             //it's an array with objects, that's why we need ID to target it
-            
+
             productsOrdered[getOrderIdPosition].products.push({
                 product_id: order.product_id,
                 amount: order.amount
