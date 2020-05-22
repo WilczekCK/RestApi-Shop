@@ -8,12 +8,17 @@ router.get('/all', async function(req, res, next) {
 });
 
 router.get('/user', async function(req, res, next) {
-    const getOrder = await order.display.fromUserOrders(req.body);
+    const getOrder = await order.display.fromUser(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
 router.get('/single', async function(req, res, next) {
     const getOrder = await order.display.singleOrder(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.get('/multiply', async function(req, res, next) {
+    const getOrder = await order.display.multiplyOrder(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 

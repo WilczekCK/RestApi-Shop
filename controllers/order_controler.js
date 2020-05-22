@@ -37,6 +37,20 @@ order_controler = {
             const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
             return { status: 200, orders: shuffledRecords }
         },
+        multiplyOrder: async ({ order_ids }) => {
+            if (!order_ids) return { status: 406, message: 'You are missing one of the parameters' };
+            const orderArray = [];
+
+            for await (order of order_ids){
+                const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order} AND order_detail.order_id = ${order} ORDER BY orders.date DESC`);
+                if(!orderRecords.length) return {status: 404, message: `Order with ID ${order} not found in db`};
+
+                const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+                orderArray.push(shuffledRecords);
+            }
+            
+            return { status: 200, orders: _.flatten(orderArray) }
+        },
         fromUserSummary: async ({ user_id, limit }) => {
             if (!user_id) return { status: 406, message: 'You are missing one of the parameters' };
             if (_.isNumber(limit)) limit = `LIMIT ${limit}`
