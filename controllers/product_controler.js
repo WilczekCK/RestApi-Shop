@@ -33,6 +33,24 @@ product_controler = {
             await mysql.update('products', `${rowsToChange}`, `${condition}`)
             return { status: 200, message: 'You successfully updated the product!' };
         }
+    },
+    showDetailsId: async (condition) => await mysql.showCertain('products', '*', `id = ${condition}`),
+    transformOrder: async ( { productArray } ) => {
+        if(!productArray) 
+            return { status: 400, message: 'One of the fields are missing!' };
+        else{
+            let returned = await Promise.all( await productArray.map( async (product) => {
+                let details = await product_controler.showDetailsId( product.product_id );
+                return {
+                    ...product,
+                    name: details[0].name,
+                    weight: details[0].weight,
+                    price: details[0].price,
+                    photo: details[0].photo,
+                }
+            }) )
+            return { status: 200, productArray: returned }
+        }
     }
 }
 
