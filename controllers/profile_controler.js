@@ -62,7 +62,7 @@ profile_controler = {
             return { status: 404, message: 'User not found in db' };
         }
     },
-    changeInfo: async ({ id, rowsToChange }) => {
+    changeInfo: async ({ rowsToChange }, id) => {
         if (!id || !rowsToChange) return { status: 400, message: 'You are missing one of the parameters' }
         const isUserInDb = await mysql.showCertain('users', '*', `id = ${id}`);
 

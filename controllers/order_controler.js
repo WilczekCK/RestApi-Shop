@@ -65,7 +65,7 @@ order_controler = {
         },
         
     },
-    createOrder: async ({ customerId, productsOrdered }) => {
+    createOrder: async ({ productsOrdered }, customerId) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
 

@@ -24,13 +24,17 @@ router.post('/login', async (req, res, next) => {
 // router.get('/details', function (req, res, next) { }); //get
 
 router.patch('/details', async function (req, res, next) {
-  const changeResponse = await profile.changeInfo(req.body);
-  res.status(changeResponse.status).send(changeResponse);
+  auth.authenticate(req, res, next).then(async(userId)=> {
+    const changeResponse = await profile.changeInfo(req.body, userId);
+    res.status(changeResponse.status).send(changeResponse);
+  }, err => console.log(err) )
 });
 
 router.delete('/delete', async function (req, res, next) {
-  const deletionResponse = await profile.remove(req.body);
-  res.status(deletionResponse.status).send(deletionResponse);
+  auth.authenticate(req, res, next).then(async(userId)=> {
+    const deletionResponse = await profile.remove(req.body);
+    res.status(deletionResponse.status).send(deletionResponse);
+  }, err => console.log(err) )
 });
 
 router.get('/details', async(req, res, next) => {

@@ -1,6 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
+var auth = require('../controllers/auth_controler.js');
+
+router.all('*', async function(req, res, next){
+    await auth.authenticate(req, res).then( async(userID)=> {
+        userId = userID;
+    }, err => console.log(err) )
+    next();
+})
 
 router.get('/all', async function(req, res, next) {
     const getOrder = await order.display.allOrders(req.body);
@@ -8,23 +16,23 @@ router.get('/all', async function(req, res, next) {
 });
 
 router.get('/user', async function(req, res, next) {
-    const getOrder = await order.display.fromUser(req.body);
+    const getOrder = await order.display.fromUserOrders(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
 router.get('/single', async function(req, res, next) {
-    const getOrder = await order.display.singleOrder(req.body);
+    const getOrder = await order.display.singleOrder(req.query);
     res.status(getOrder.status).send(getOrder);
 });
 
-router.get('/multiply', async function(req, res, next) {
+router.post('/multiply', async function(req, res, next) {
     const getOrder = await order.display.multiplyOrder(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
 router.get('/history', async function(req, res, next) {
     //It's like a cart ;)
-    const getOrder = await order.display.fromUserSummary(req.body);
+    const getOrder = await order.display.fromUserSummary(req.body, userId);
     res.status(getOrder.status).send(getOrder);
 });
 
@@ -39,7 +47,7 @@ router.delete('/remove', async function(req, res, next) {
 });
 
 router.post('/create', async function(req, res, next) {
-    const orderResponse = await order.createOrder(req.body);
+    const orderResponse = await order.createOrder(req.body, userId);
     res.status(orderResponse.status).send(orderResponse);
 });
 
