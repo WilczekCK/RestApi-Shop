@@ -51,7 +51,7 @@ order_controler = {
             
             return { status: 200, orders: _.flatten(orderArray) }
         },
-        fromUserSummary: async ({ user_id, limit }) => {
+        fromUserSummary: async ({ limit },  user_id) => {
             if (!user_id) return { status: 406, message: 'You are missing one of the parameters' };
             if (_.isNumber(limit)) limit = `LIMIT ${limit}`
             else limit = '';
