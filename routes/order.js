@@ -2,18 +2,29 @@ var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
 
-router.get('/display/all', async function(req, res, next) {
-    const getOrder = await order.display.all(req.body);
+router.get('/all', async function(req, res, next) {
+    const getOrder = await order.display.allOrders(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
-router.get('/display/fromUser', async function(req, res, next) {
+router.get('/user', async function(req, res, next) {
     const getOrder = await order.display.fromUser(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 
-router.get('/display/singleOrder', async function(req, res, next) {
-    const getOrder = await order.display.single(req.body);
+router.get('/single', async function(req, res, next) {
+    const getOrder = await order.display.singleOrder(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.get('/multiply', async function(req, res, next) {
+    const getOrder = await order.display.multiplyOrder(req.body);
+    res.status(getOrder.status).send(getOrder);
+});
+
+router.get('/history', async function(req, res, next) {
+    //It's like a cart ;)
+    const getOrder = await order.display.fromUserSummary(req.body);
     res.status(getOrder.status).send(getOrder);
 });
 

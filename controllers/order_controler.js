@@ -9,7 +9,7 @@ order_controler = {
         setPaid: () => { }
     },
     display: {
-        all: async ({ limit }) => {
+        allOrders: async ({ limit }) => {
             if (_.isNumber(limit)) limit = `LIMIT ${limit}`
             else limit = '';
 
@@ -24,16 +24,46 @@ order_controler = {
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.user_id = ${user_id} AND orders.id = order_detail.order_id ORDER BY orders.date DESC ${limit}`);
             if(!orderRecords.length) return {status: 404, message: 'User not found in db'};
 
-            const shuffledRecords = await order_controler.getOrdersArrayFromUser(orderRecords);
+            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
 
             return { status: 200, orders: shuffledRecords }
         },
-        single: async ({ order_id }) => {
+        singleOrder: async ({ order_id }) => {
             if (!order_id) return { status: 406, message: 'You are missing one of the parameters' };
 
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order_id} AND order_detail.order_id = ${order_id} ORDER BY orders.date DESC`);
-            return { status: 200, orders: orderRecords }
-        }
+            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
+
+            const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+            return { status: 200, orders: shuffledRecords }
+        },
+        multiplyOrder: async ({ order_ids }) => {
+            if (!order_ids) return { status: 406, message: 'You are missing one of the parameters' };
+            const orderArray = [];
+
+            for await (order of order_ids){
+                const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order} AND order_detail.order_id = ${order} ORDER BY orders.date DESC`);
+                if(!orderRecords.length) return {status: 404, message: `Order with ID ${order} not found in db`};
+
+                const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
+                orderArray.push(shuffledRecords);
+            }
+            
+            return { status: 200, orders: _.flatten(orderArray) }
+        },
+        fromUserSummary: async ({ user_id, limit }) => {
+            if (!user_id) return { status: 406, message: 'You are missing one of the parameters' };
+            if (_.isNumber(limit)) limit = `LIMIT ${limit}`
+            else limit = '';
+
+            const orderRecords = await mysql.showCertain('orders, order_detail, products','orders.*, order_detail.*, products.price',`orders.user_id = ${user_id} AND orders.id = order_detail.order_id AND order_detail.product_id = products.id ORDER BY orders.date DESC ${limit}`);
+            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
+
+            const shuffledRecords = await order_controler.getUserOrderSummaries(orderRecords);
+
+            return { status: 200, orders: shuffledRecords }
+        },
+        
     },
     createOrder: async ({ customerId, productsOrdered }) => {
         if (!customerId || !productsOrdered) return { status: 400, message: 'You are missing one of the parameters' }
@@ -73,7 +103,32 @@ order_controler = {
             return { status: 200, message: 'You removed the order successfully!' }
         }
     },
-    getOrdersArrayFromUser: async (orders) => {
+    getUserOrderSummaries: async (orders) => {
+        const productsOrdered = []; 
+
+        _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
+            productsOrdered.push({
+                orderId: order_id,
+                date: '',
+                price: 0,
+                amountOfProducts: 0,
+                status: 0
+            })
+        })
+        
+        orders.forEach(order => {
+            let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'orderId'), order.id);
+            //it's an array with objects, that's why we need ID to target it
+                productsOrdered[getOrderIdPosition].date = moment(order.date).format("YYYY-MM-DD HH:mm:ss");
+                productsOrdered[getOrderIdPosition].price += (order.price) * order.amount;
+                productsOrdered[getOrderIdPosition].amountOfProducts += order.amount;
+                productsOrdered[getOrderIdPosition].status = order.status;
+        })
+
+        
+        return productsOrdered;
+    },
+    createProductsArrayFromOrder: async (orders) => {
         const productsOrdered = []; 
 
         _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
@@ -82,6 +137,8 @@ order_controler = {
 
         orders.forEach(order => {
             let getOrderIdPosition = _.indexOf(_.pluck(productsOrdered, 'order_id'), order.id);
+            //it's an array with objects, that's why we need ID to target it
+
             productsOrdered[getOrderIdPosition].products.push({
                 product_id: order.product_id,
                 amount: order.amount
