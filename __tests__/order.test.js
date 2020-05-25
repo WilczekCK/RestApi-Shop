@@ -50,4 +50,13 @@ describe('Order test', () => {
             .expect(200)
     })
 
+    test('Is order available to remove?', async () => {
+        await request(server)
+            .delete('/order/remove')
+            .send({
+                customerId: 1,
+                orderId: orderId
+            })
+            .expect(200)
+    })
 });
