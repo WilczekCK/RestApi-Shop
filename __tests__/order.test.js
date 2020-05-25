@@ -31,11 +31,21 @@ describe('Order test', () => {
     });
 
     test('Is order available to see?, "GET order/single"', async () => {
-        console.log('find' +orderId)
         await request(server)
             .get('/order/single')
             .send({
                 order_id: orderId
+            })
+            .expect(200)
+    })
+
+    test('Is order available to change status?', async () => {
+        await request(server)
+            .patch('/order/modify')
+            .send({
+                status: 1,
+                id: orderId,
+                user_id: 1
             })
             .expect(200)
     })
