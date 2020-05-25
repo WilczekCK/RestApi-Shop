@@ -18,12 +18,12 @@ router.get('/', async function(req, res, next) {
 });
 
 router.post('/', async (req, res, next) => {
-        const isNewAddressAdded = await address.addAddress( req.body );
+        const isNewAddressAdded = await address.addAddress( req.body, userId );
         res.status(isNewAddressAdded.status).send(isNewAddressAdded);
 });
 
 router.patch('/details', async function(req, res, next) {
-    const isAddressDetailChanged = await address.changeDetails(req.body);
+    const isAddressDetailChanged = await address.changeDetails( req.body, userId );
     res.status(isAddressDetailChanged.status).send(isAddressDetailChanged);
 });
 
@@ -33,7 +33,7 @@ router.get('/:addressId', async function(req, res, next) {
 });
 
 router.delete('/delete', async function(req, res, next) {
-    const isAddressRemoved = await address.removeAddress( { id: req.body.id, userId: userId } );
+    const isAddressRemoved = await address.removeAddress( req.body, userId );
     res.status(isAddressRemoved.status).send(isAddressRemoved);
 });
 

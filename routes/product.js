@@ -27,5 +27,10 @@ router.get('/:url_name', async function(req, res, next) {
     res.send(detailedProduct);
 });
 
+router.post('/transform', async function(req, res, next){
+    const detailedOrder = await product.transformOrder( req.body );
+    res.status(detailedOrder.status).send(detailedOrder)
+})
+
 
 module.exports = router;

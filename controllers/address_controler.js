@@ -7,7 +7,7 @@ const jwtSecret = require('./../config/jwtSecret')
 var address_controler = address_controler || {}
 address_controler = {
 
-    addAddress: async ({ address, postCode, city, userId }) => {
+    addAddress: async ({ address, postCode, city }, userId) => {
 
             if ( !address || !postCode || !city || !userId ) {
                 return { status: 400, message: 'You are missing one of the parameters' }
@@ -21,7 +21,7 @@ address_controler = {
             }
         // }
     },
-    removeAddress: async ({ id, userId }) => {
+    removeAddress: async ({ id }, userId) => {
 
         if (!id) return { status: 406, message: 'Provide the ID of an adress you want to remove!' };
         // const isAddressInDb = await mysql.showCertain('addresses', '*', `id = ${id}`);
@@ -33,15 +33,17 @@ address_controler = {
         //     return { status: 404, message: 'User not found in db' };
         // }
     },
-    changeDetails: async ({ id, userId, rowsToChange }) => {
+    changeDetails: async ({ id, rowsToChange }, userId) => {
         if (!id || !rowsToChange) return { status: 400, message: 'You are missing one of the parameters' }
         // const isUserInDb = await mysql.showCertain( 'addresses', '*', `id = ${id}, userId = ${userId}`);
 
         const rows = await mysql.update('addresses', rowsToChange, `id = ${id} AND user_id = ${userId}`);
+        console.log(rows);
+        
         if( rows.affectedRows)
             return { status: 200, message: 'You successfully changed info of this address!', rows };
         else
-            return { status: 401, message: 'Address not changed!', rows };
+            return { status: 406, message: 'Address not changed!', rows };
 
     },
     lookForAddress: async ( { id, userId } ) => {
