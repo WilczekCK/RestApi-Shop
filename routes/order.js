@@ -32,7 +32,7 @@ router.post('/multiply', async function(req, res, next) {
 
 router.get('/history', async function(req, res, next) {
     //It's like a cart ;)
-    const getOrder = await order.display.fromUserSummary(req.body, userId);
+    const getOrder = await order.display.fromUserSummary(req.query, userId);
     res.status(getOrder.status).send(getOrder);
 });
 
