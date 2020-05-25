@@ -65,21 +65,22 @@ order_controler = {
         },
         
     },
-    createOrder: async ({ productsOrdered, address }, customerId) => {
-        if (!customerId || !productsOrdered || !address) return { status: 400, message: 'You are missing one of the parameters' }
+    createOrder: async ({ productsOrdered, address, payment }, customerId) => {
+        if (!customerId || !productsOrdered || !address || !payment) return { status: 400, message: 'You are missing one of the parameters' }
         const summaryPrice = await order_controler.sumPrice(productsOrdered);
-
+        const paymentStatus = payment == "cash-on-delivery" ? 1 : 0;
         let orderDetails = {
             status: summaryPrice.status,
-            orderId: 0,
+            orderId: 0,// ?
             customerId: customerId,
             productsOrdered: productsOrdered,
-            summaryPrice: summaryPrice.message
+            summaryPrice: summaryPrice.message,
+            paymentMethod: paymentStatus
         }
 
         await mysql.insert('orders',
             'user_id, date, status, address_id',
-            `${customerId}, '${moment().format("YYYY-MM-DD HH:mm:ss")}', 0, ${address}`)
+            `${customerId}, '${moment().format("YYYY-MM-DD HH:mm:ss")}', ${paymentStatus}, ${address}`)
             .then(({ insertId }) => {
                 productsOrdered.forEach(product => {
                     mysql.insert('order_detail',
