@@ -185,10 +185,10 @@ order_controler = {
             return { status: 406, message: 'Error while summary of products!' }
         }
     },
-    setStatus: async ({ status, id, user_id }) => {
-        if (!status || !id || !user_id) return { status: 406, message: 'You are missing one of the parameters!' }
+    setStatus: async ({ status, id }) => {
+        if (!status || !id) return { status: 406, message: 'You are missing one of the parameters!' }
 
-        const response = await mysql.update('orders', `status = ${status}`, `id = ${id} AND user_id = ${user_id}`);
+        const response = await mysql.update('orders', `status = ${status}`, `id = ${id}`);
         if (response) return { status: 200, message: 'You changed the order successfully!' }
         else return { status: 406, message: 'Error while setting status!' }
     }
