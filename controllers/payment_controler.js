@@ -1,6 +1,7 @@
 var request = require("request");
 var axios = require('axios');
-
+var payuSignature = require('../config/payuSignature')
+var order = require('./order_controler.js');
 
 var payment_controler = payment_controler || {}
 payment_controler = {
@@ -70,6 +71,22 @@ payment_controler = {
     })
 
   },
+
+  handleInfoFromPayu: async ( req ) => {
+    
+    //check if request came from payu
+    let incomingSignature = req.headers['x-openpayu-signature'].split(";")[1].slice(10);
+    if( !incomingSignature === payuSignature ) return { status: 406, msg: "Wrong Authorization"}
+
+    const orderId = Number(req.body.order.extOrderId);
+    let status;
+    if( req.body.order.status == "COMPLETED" ) status = 2
+    else if( req.body.order.status == "CANCELED" ) status = 3
+
+    let response = await order.setStatus( { status, id: orderId } )
+
+    return response
+  }
 
 }
 
