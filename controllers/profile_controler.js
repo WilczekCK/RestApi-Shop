@@ -6,29 +6,31 @@ const jwtSecret = require('./../config/jwtSecret')
 
 var profile_controler = profile_controler || {}
 profile_controler = {
-    // login: (req, user) => {
-
-    //     return new Promise((resolve, reject) => {
-
-    //         req.logIn(user, async err => {
-    //             if (err) throw err
-
-    //             let foundUser = await profile_controler.lookForProfile(`email = '${user.email}'`);
-    //             const token = jwt.sign({ id: foundUser[0].id }, jwtSecret);
-
-    //             resolve({ auth: true, token: token, message: 'user logged in successfully' });
-    //         });
-
-    //     })
-
-    // },
+    
+    addTemporaryUser: async ({ firstName, secondName, email, phone }) => {
+        let response;
+        if (!firstName || !secondName || !email || !phone ) {
+            return { status: 400, message: 'You are missing one of the user parameters' }
+        }
+        else {
+            await mysql.insert('users',
+                'name, surname, email, password, phone',
+                `'${firstName}', '${secondName}', '${email}', '', ${phone}`
+            ).then( ( userResponse ) => {
+                response = userResponse;
+            } )
+        }
+        return { status: 200, message: 'You are registered succesfully!', rows: response };
+    },
     addNew: async ({ firstName, secondName, email, password, phone, street, city, postCode }) => {
         const isRegistered = await profile_controler.lookForProfile(`email = '${email}'`);
         if (isRegistered.length) {
             return { status: 409, message: 'Account with that email is already registered!' }
         } else {
-            if (firstName || secondName || email || password || phone || street || city || postCode) {
-                
+            if (!firstName || !secondName || !email || !password || !phone || !street || !city || !postCode) {
+                return { status: 400, message: 'You are missing one of the parameters' }
+            } else {
+
                 mysql.insert('users',
                     'name, surname, email, password, phone',
                     `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}`
@@ -43,11 +45,8 @@ profile_controler = {
                         `email = "${email}"`
                     )    
                 })
-                
-
                 return { status: 200, message: 'You are registered succesfully!'  };
-            } else {
-                return { status: 400, message: 'You are missing one of the parameters' }
+
             }
         }
     },

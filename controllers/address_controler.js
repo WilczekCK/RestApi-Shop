@@ -8,8 +8,8 @@ var address_controler = address_controler || {}
 address_controler = {
 
     addAddress: async ({ address, postCode, city }, userId) => {
-
-            if ( !address || !postCode || !city || !userId ) {
+            if(!userId) userId = -1;
+            if ( !address || !postCode || !city ) {
                 return { status: 400, message: 'You are missing one of the parameters' }
             } 
             else {
@@ -46,7 +46,7 @@ address_controler = {
             return { status: 406, message: 'Address not changed!', rows };
 
     },
-    lookForAddress: async ( { id, userId } ) => {
+    lookForAddress: async ( { id }, userId ) => {
         const rows = await mysql.showCertain('addresses', '*', `id = ${id} AND user_id = ${userId}`);
         if( rows.length > 0 )
             return { status: 200, message: 'Success', rows };

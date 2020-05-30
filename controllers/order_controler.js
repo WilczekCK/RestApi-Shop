@@ -32,10 +32,10 @@ order_controler = {
             if (!order_id) return { status: 406, message: 'You are missing one of the parameters' };
 
             const orderRecords = await mysql.showCertain('orders, order_detail', 'orders.*, order_detail.*', `orders.id = ${order_id} AND order_detail.order_id = ${order_id} ORDER BY orders.date DESC`);
-            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
 
+            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
             const shuffledRecords = await order_controler.createProductsArrayFromOrder(orderRecords);
-            return { status: 200, orders: shuffledRecords }
+            return { status: 200, orders: shuffledRecords, orderRecords }
         },
         multiplyOrder: async ({ order_ids }) => {
             if (!order_ids) return { status: 406, message: 'You are missing one of the parameters' };
@@ -93,10 +93,10 @@ order_controler = {
 
         return orderDetails;
     },
-    removeOrder: async ({ customerId, orderId }) => {
+    removeOrder: async ({ orderId }, customerId) => {
         if (!customerId || !orderId) return { status: 406, message: 'You are missing one of the parameters' };
 
-        const orderDetails = await mysql.showCertain('orders', '*', `user_id = '${customerId}' AND id = '${orderId}'`)
+        const orderDetails = await mysql.showCertain('orders', '*', `user_id=${customerId} AND id=${orderId}`)
         if (_.isEmpty(orderDetails)) return { status: 400, message: 'There is no order like that' };
         else {
             mysql.delete('orders', orderDetails[0].id)

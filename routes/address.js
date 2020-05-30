@@ -5,6 +5,11 @@ var auth = require('../controllers/auth_controler.js');
 
 let userId;
 
+router.post('/noauth', async (req, res, next) => {
+    const isNewAddressAdded = await address.addAddress( req.body );
+    res.status(isNewAddressAdded.status).send(isNewAddressAdded);
+});
+
 router.all('*', async function(req, res, next){
     await auth.authenticate(req, res).then( async(userID)=> {
         userId = userID;
@@ -28,7 +33,7 @@ router.patch('/details', async function(req, res, next) {
 });
 
 router.get('/:addressId', async function(req, res, next) {
-    const detailedAddress = await address.lookForAddress( { id: req.params.addressId, userId } );
+    const detailedAddress = await address.lookForAddress( { id: req.params.addressId }, userId );
     res.status(detailedAddress.status).send(detailedAddress);
 });
 

@@ -1,7 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
+var profile = require('../controllers/profile_controler.js');
 var auth = require('../controllers/auth_controler.js');
+
+router.post('/create/noauth', async(req, res, next) => {
+
+    const profileResponse = await profile.addTemporaryUser( req.body.user );
+    const orderResponse = await order.createOrder(req.body, profileResponse.rows.insertId);
+ 
+    res.status(orderResponse.status).send(orderResponse);
+});
 
 router.all('*', async function(req, res, next){
     await auth.authenticate(req, res).then( async(userID)=> {
@@ -42,7 +51,7 @@ router.patch('/modify', async function(req, res, next) {
 });
 
 router.delete('/remove', async function(req, res, next) {
-    const removeResponse = await order.removeOrder(req.body);
+    const removeResponse = await order.removeOrder(req.body, userId);
     res.status(removeResponse.status).send(removeResponse);
 });
 
