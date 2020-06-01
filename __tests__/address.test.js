@@ -100,7 +100,6 @@ describe('Address test', () => {
         .delete('/address/delete')
         .set('Authorization', `JWT ${token}`)
         .send({
-            userId: 2,
             id: testAddressId,
         })
         .expect( (res) => {

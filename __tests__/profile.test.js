@@ -3,8 +3,10 @@ const request = require('supertest');
 const http = require('http');
 const server = require('../app.js');
 const mysql = require('../controllers/mysql_controler.js');
-let testUserID;
+const address = require('../controllers/address_controler.js');
+let testUserID, testAddressID;
 let tokenReceived;
+
 
 beforeAll(async () => {
     // do something before anything else runs
@@ -13,9 +15,9 @@ beforeAll(async () => {
 
 afterAll(async (done) => {
     console.log('Jest closing!')
+    await address.removeAddress( { id: testAddressID }, testUserID)
     testUserID = '';
     tokenReceived = '';
-
     server.close(done);
 })
 
@@ -33,8 +35,10 @@ describe('Profile test', () => {
             city: 'Cracow',
             postCode: '21-231'
             })
-            .expect(200);
-
+            .expect( res => {
+                testAddressID = res.body.rows.addressResponse.insertId;
+                expect(res.body.status).toBe(200)
+            })
             id = await mysql.showCertain(`users`, `id`, `email = 'adam.kowalsky@gmail.com'`);
             testUserID = id[0].id;
     });
@@ -47,7 +51,6 @@ describe('Profile test', () => {
                 password: 'TestingPurposes12!'
             })
             .expect( res => {
-                console.log(res.body)
                 tokenReceived = res.body.token;
                 if(tokenReceived){
                     return 0;
@@ -73,21 +76,6 @@ describe('Profile test', () => {
     })
     
     // test('Is possible to check existing user information and login to account "/account/findUser"', async () => {
-    //     await request(server)
-    //         .post('/account/login')
-    //         .send({
-    //             username: 'adam.kowalski@gmail.com',
-    //             password: 'TestingPurposes12!'
-    //         })
-    //         .expect(function(res){
-    //             tokenReceived = res.body.token;
-    //             if(tokenReceived){
-    //                 return 0;
-    //             }else{
-    //                 throw new Error('Login credentials are not valid')
-    //             }
-    //         })
-
     //     await request(server)
     //         .get('/account/details')
     //         .set('Authorization', `JWT ${tokenReceived}`)
