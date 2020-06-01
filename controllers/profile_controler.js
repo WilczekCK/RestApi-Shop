@@ -23,6 +23,7 @@ profile_controler = {
         return { status: 200, message: 'You are registered succesfully!', rows: response };
     },
     addNew: async ({ firstName, secondName, email, password, phone, street, city, postCode }) => {
+        let addressResponse, profileResponse;
         const isRegistered = await profile_controler.lookForProfile(`email = '${email}'`);
         if (isRegistered.length) {
             return { status: 409, message: 'Account with that email is already registered!' }
@@ -31,21 +32,23 @@ profile_controler = {
                 return { status: 400, message: 'You are missing one of the parameters' }
             } else {
 
-                mysql.insert('users',
+                await mysql.insert('users',
                     'name, surname, email, password, phone',
                     `'${firstName}', '${secondName}', '${email}', '${bcrypt.hashSync(password, 10)}', ${phone}`
                 ).then( ( userResponse ) => {
-                    
+                profileResponse = userResponse;
+
                 return mysql.insert('addresses', 
                     'city, address, post_code, user_id',
                     `'${city}', '${street}', '${postCode}', ${userResponse.insertId}`)
-                }).then( ( addressResponse ) => {
+                }).then( ( addressRes ) => {
+                    addressResponse = addressRes;
                     mysql.update('users', 
                         `default_address = ${addressResponse.insertId}`, 
                         `email = "${email}"`
                     )    
                 })
-                return { status: 200, message: 'You are registered succesfully!'  };
+                return { status: 200, message: 'You are registered succesfully!', rows:{ profileResponse, addressResponse }  };
 
             }
         }

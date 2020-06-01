@@ -99,9 +99,9 @@ order_controler = {
         const orderDetails = await mysql.showCertain('orders', '*', `user_id=${customerId} AND id=${orderId}`)
         if (_.isEmpty(orderDetails)) return { status: 400, message: 'There is no order like that' };
         else {
-            mysql.delete('orders', orderDetails[0].id)
+            let orderResponse = await mysql.delete('orders', orderId)
             mysql.query(`DELETE FROM order_detail WHERE order_id = ${orderDetails[0].id}`)
-            return { status: 200, message: 'You removed the order successfully!' }
+            return { status: 200, message: 'You removed the order successfully!', rows: orderResponse }
         }
     },
     getUserOrderSummaries: async (orders) => {
