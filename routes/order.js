@@ -12,6 +12,12 @@ router.post('/create/noauth', async(req, res, next) => {
     res.status(orderResponse.status).send({orderResponse, profileResponse});
 });
 
+router.get('/single/noauth', async function(req, res, next) {
+    console.log(req.query); //address must be equal to -1 and temp user?
+    const getOrder = await order.display.singleOrder(req.query);
+    res.status(getOrder.status).send(getOrder);
+});
+
 router.all('*', async function(req, res, next){
     await auth.authenticate(req, res).then( async(userID)=> {
         userId = userID;
@@ -57,7 +63,7 @@ router.delete('/remove', async function(req, res, next) {
 
 router.post('/create', async function(req, res, next) {
     const orderResponse = await order.createOrder(req.body, userId);
-    res.status(orderResponse.status).send(orderResponse);
+    res.status(orderResponse.status).send({orderResponse, profileResponse:null});
 });
 
 module.exports = router;
