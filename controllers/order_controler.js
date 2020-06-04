@@ -57,7 +57,7 @@ order_controler = {
             else limit = '';
 
             const orderRecords = await mysql.showCertain('orders, order_detail, products','orders.*, order_detail.*, products.price',`orders.user_id = ${user_id} AND orders.id = order_detail.order_id AND order_detail.product_id = products.id ORDER BY orders.date DESC ${limit}`);
-            if(!orderRecords.length) return {status: 404, message: 'Order not found in db'};
+            if(!orderRecords.length) return {status: 200, message: 'Order not found in db', orders: []};
 
             const shuffledRecords = await order_controler.getUserOrderSummaries(orderRecords);
 
@@ -130,10 +130,12 @@ order_controler = {
         return productsOrdered;
     },
     createProductsArrayFromOrder: async (orders) => {
+        console.log("orders 1");
+        console.log(orders);
+        
         const productsOrdered = []; 
-
         _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
-            productsOrdered.push({order_id: order_id, products: []})
+            productsOrdered.push({order_id: order_id, status: orders[0].status, date: moment(orders[0].date).format("YYYY-MM-DD HH:mm:ss"), products: []})
         })
 
         orders.forEach(order => {
@@ -142,7 +144,7 @@ order_controler = {
 
             productsOrdered[getOrderIdPosition].products.push({
                 product_id: order.product_id,
-                amount: order.amount
+                amount: order.amount,
             })
         })
 
