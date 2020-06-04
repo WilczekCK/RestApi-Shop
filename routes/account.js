@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('../controllers/mysql_controler.js');
-var mailer = require('../controllers/mail_controler.js');
 var profile = require('../controllers/profile_controler.js');
 var auth = require('../controllers/auth_controler.js');
 const passport = require('passport');
 
-router.get('/', async function (req, res, next) {
-  console.log(await mailer.send('wilkuwdr2008@gmail.com', 'Your account is created!', 'XD', '<b>XD</b>'))
+router.get('/', function (req, res, next) {
+  //console.log(await mysql.query('select * from test'))
+  res.render('index', { title: 'Hey', message: 'Hello there!' })
 });
 
 router.post('/register', async (req, res) => {

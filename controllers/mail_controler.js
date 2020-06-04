@@ -23,9 +23,10 @@ mail_controler = {
                 html: html
             })
 
-            if(callback.accepted) return {status: 'success'}
-            else if(callback.rejected) return {status: 'deny'}
-            else return {status: undefined}
+            if(callback) return {
+                acceptedMails: callback.accepted,
+                rejectedMails: callback.rejected
+            }
         }catch{
             return new Error('There is a problem with sending the mail!')
         }
