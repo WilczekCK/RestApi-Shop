@@ -45,7 +45,7 @@ describe('Order test', () => {
             })
             .expect(200)
             .then(response => {
-                orderId = response.body.orderId;
+                orderId = response.body.orderResponse.orderId;
             })
     });
 
