@@ -8,8 +8,8 @@ var address_controler = address_controler || {}
 address_controler = {
 
     addAddress: async ({ address, postCode, city }, userId) => {
-
-            if ( !address || !postCode || !city || !userId ) {
+            if(!userId) userId = -1;
+            if ( !address || !postCode || !city ) {
                 return { status: 400, message: 'You are missing one of the parameters' }
             } 
             else {
@@ -24,21 +24,22 @@ address_controler = {
     removeAddress: async ({ id }, userId) => {
 
         if (!id) return { status: 406, message: 'Provide the ID of an adress you want to remove!' };
-        // const isAddressInDb = await mysql.showCertain('addresses', '*', `id = ${id}`);
 
-        // if (!_.isEmpty(isAddressInDb)) {
-        const rows = await mysql.deleteWithAuth( 'addresses', {id: id, userId: userId} );
-        return { status: 200, message: 'You successfully removed this address!', rows };
-        // } else {
-        //     return { status: 404, message: 'User not found in db' };
-        // }
+        const rowsToChange = `is_deleted = 1`
+        const rows = await mysql.update('addresses', rowsToChange, `id = ${id} AND user_id = ${userId}`);
+        
+        if( rows.affectedRows)
+            return { status: 200, message: 'You successfully changed info of this address!', rows };
+        else
+            return { status: 406, message: 'Address not changed!', rows };
+            
+
     },
     changeDetails: async ({ id, rowsToChange }, userId) => {
         if (!id || !rowsToChange) return { status: 400, message: 'You are missing one of the parameters' }
         // const isUserInDb = await mysql.showCertain( 'addresses', '*', `id = ${id}, userId = ${userId}`);
 
         const rows = await mysql.update('addresses', rowsToChange, `id = ${id} AND user_id = ${userId}`);
-        console.log(rows);
         
         if( rows.affectedRows)
             return { status: 200, message: 'You successfully changed info of this address!', rows };
@@ -46,7 +47,7 @@ address_controler = {
             return { status: 406, message: 'Address not changed!', rows };
 
     },
-    lookForAddress: async ( { id, userId } ) => {
+    lookForAddress: async ( { id }, userId ) => {
         const rows = await mysql.showCertain('addresses', '*', `id = ${id} AND user_id = ${userId}`);
         if( rows.length > 0 )
             return { status: 200, message: 'Success', rows };
@@ -54,7 +55,7 @@ address_controler = {
             return { status: 404, message: 'There is no addres with that id', rows };
     },
     showAll: async ( {userId} ) => {
-        const rows = await mysql.showCertain('addresses', '*', `user_id = ${userId}`)
+        const rows = await mysql.showCertain('addresses', '*', `user_id = ${userId} AND is_deleted = 0`)
         if( rows.length > 0 )
             return { status: 200, message: 'You successfully got rows', rows }
         else 
