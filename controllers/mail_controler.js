@@ -13,7 +13,7 @@ mail_controler = {
             pass: 'b0dc723f60997f',
         }
     }),
-    send: async (deliverTo, subject, text, html) => {
+    send: async (status, deliverTo, subject, text, html) => {
         try{
             const callback = await mail_controler.transporter.sendMail({
                 from: 'Bryan - Your shop assistent <noreply@z-dowozem.com> |',
@@ -31,8 +31,13 @@ mail_controler = {
             return new Error('There is a problem with sending the mail!')
         }
 
+    },
+    checkStatus: async (status) => {
+        console.log(status)
     }
 }
+
+
 mail_controler.transporter.verify((error, success) => {
     if (error) {
       console.log(error);
