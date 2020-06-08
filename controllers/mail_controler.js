@@ -33,6 +33,13 @@ mail_controler = {
 
     }
 }
+mail_controler.transporter.verify((error, success) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Server is ready to take messages');
+    }
+  });
 
 
 module.exports = mail_controler || 'Mail Controler Problem!';
