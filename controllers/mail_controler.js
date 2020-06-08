@@ -13,7 +13,7 @@ mail_controler = {
             pass: 'b0dc723f60997f',
         }
     }),
-    send: async (status, deliverTo, subject, text, html) => {
+    send: async (deliverTo, subject, text, html) => {
         try{
             const callback = await mail_controler.transporter.sendMail({
                 from: 'Bryan - Your shop assistent <noreply@z-dowozem.com> |',
@@ -30,10 +30,21 @@ mail_controler = {
         }catch{
             return new Error('There is a problem with sending the mail!')
         }
-
     },
-    checkStatus: async (status) => {
-        console.log(status)
+    schema:{
+        newAccount: async (status, accInfo) => {
+            console.log(accInfo)
+            if(status !== 200){
+                console.log('Mail not send! - 200 status not reached!')
+                return 0;
+            }else{
+                await mail_controler.send(accInfo.email, 
+                    'Z dowozem || Account created!',
+                    `Hello ${accInfo.name} Something bla bla bla`,
+                    `<b>${accInfo.name}</b> your account is created!`
+                )
+            }
+        }
     }
 }
 

@@ -48,7 +48,7 @@ profile_controler = {
                         `email = "${email}"`
                     )    
                 })
-                return { status: 200, message: 'You are registered succesfully!', rows:{ profileResponse, addressResponse, profileResponse }  };
+                return { status: 200, message: 'You are registered succesfully!', rows:{ profileResponse, addressResponse }, accInfo: {name: firstName, email: email}  };
 
             }
         }

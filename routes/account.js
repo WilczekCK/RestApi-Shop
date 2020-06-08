@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('../controllers/mysql_controler.js');
+var mail = require('../controllers/mail_controler.js');
 var profile = require('../controllers/profile_controler.js');
 var auth = require('../controllers/auth_controler.js');
 const passport = require('passport');
@@ -12,6 +13,8 @@ router.get('/', function (req, res, next) {
 
 router.post('/register', async (req, res) => {
   const profileResponse = await profile.addNew(req.body);
+  await mail.schema.newAccount(profileResponse.status, profileResponse.accInfo)
+  
   res.send(profileResponse)
 })
 
