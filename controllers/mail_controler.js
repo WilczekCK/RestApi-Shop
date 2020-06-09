@@ -2,6 +2,8 @@ var mysql = require('./mysql_controler');
 var nodemailer = require('nodemailer');
 var _ = require('underscore');
 var createMail = require('../mail_content/create_body')
+var profile = require('./profile_controler');
+var product = require('./product_controler');
 
 var mail_controler = mail_controler || {}
 mail_controler = {
@@ -35,7 +37,6 @@ mail_controler = {
     },
     schema:{
         newAccount: async (status, accInfo) => {
-            console.log(accInfo)
             if(status !== 200){
                 console.log('Mail not send! - 200 status not reached!')
                 return 0;
@@ -49,6 +50,48 @@ mail_controler = {
                         cid: 'logo' //same cid value as in the html img src
                     }],
                     createMail.account(accInfo.name),
+                )
+            }
+        },
+        newOrderLogged: async (status, products, userId) => {
+            if(status !== 200){
+                console.log('Mail not send! - 200 status not reached!')
+                return 0;
+            }else{
+                const [{email, name}] = await profile.lookForProfile(`id = ${userId}`);
+                const detailedProductInfo = [];
+
+                for await (item of products){
+                    const [{name, price}] = await product.showDetailsId(item.productId);
+                    detailedProductInfo.push({productName:name, amount: item.amount, price: price})
+                }
+
+
+
+                await mail_controler.send(email, 
+                    'Z dowozem || Order created!',
+                    `Hello ${name} Something bla bla bla`,
+                    `<b>${name}</b> your order is created!<br>
+                    You ordered:<br>`
+                )
+            }
+        },
+        newOrderNotLogged: async (status, products, userInfo) => {
+            if(status !== 200){
+                console.log('Mail not send! - 200 status not reached!')
+                return 0;
+            }else{
+                const detailedProductInfo = [];
+                for await (item of products){
+                    const [{name, price}] = await product.showDetailsId(item.productId);
+                    detailedProductInfo.push({productName:name, amount: item.amount, price: price})
+                }
+
+                await mail_controler.send(userInfo.email, 
+                    'Z dowozem || Order created! - Guest',
+                    `Hello ${userInfo.firstName} Something bla bla bla`,
+                    `<b>${userInfo.firstName}</b> your order is created!<br>
+                    You ordered:<br>`
                 )
             }
         }
