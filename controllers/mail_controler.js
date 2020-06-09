@@ -65,7 +65,7 @@ mail_controler = {
                     'Z dowozem || Order created!',
                     `Hello ${name} Something bla bla bla`,
                     `<b>${name}</b> your order is created!<br>
-                    You ordered:<br>
+                    You ordered:<br>`
                 )
             }
         }
