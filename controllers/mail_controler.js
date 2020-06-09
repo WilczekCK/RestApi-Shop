@@ -68,6 +68,25 @@ mail_controler = {
                     You ordered:<br>`
                 )
             }
+        },
+        newOrderNotLogged: async (status, products, userInfo) => {
+            if(status !== 200){
+                console.log('Mail not send! - 200 status not reached!')
+                return 0;
+            }else{
+                const detailedProductInfo = [];
+                for await (item of products){
+                    const [{name, price}] = await product.showDetailsId(item.productId);
+                    detailedProductInfo.push({productName:name, amount: item.amount, price: price})
+                }
+
+                await mail_controler.send(userInfo.email, 
+                    'Z dowozem || Order created! - Guest',
+                    `Hello ${userInfo.firstName} Something bla bla bla`,
+                    `<b>${userInfo.firstName}</b> your order is created!<br>
+                    You ordered:<br>`
+                )
+            }
         }
     }
 }

@@ -9,7 +9,8 @@ router.post('/create/noauth', async(req, res, next) => {
 
     const profileResponse = await profile.addTemporaryUser( req.body.user );
     const orderResponse = await order.createOrder(req.body, profileResponse.rows.insertId);
- 
+    await mail.schema.newOrderNotLogged(orderResponse.status, orderResponse.productsOrdered, req.body.user);
+
     res.status(orderResponse.status).send({orderResponse, profileResponse});
 });
 
