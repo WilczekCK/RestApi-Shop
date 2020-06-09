@@ -15,7 +15,7 @@ router.post('/register', async (req, res) => {
   const profileResponse = await profile.addNew(req.body);
   await mail.schema.newAccount(profileResponse.status, profileResponse.accInfo)
   
-  res.send(profileResponse)
+  res.status(profileResponse.status).send(profileResponse)
 })
 
 router.post('/login', async (req, res, next) => {
