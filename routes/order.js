@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var order = require('../controllers/order_controler.js');
+var mail = require('../controllers/mail_controler.js');
 var profile = require('../controllers/profile_controler.js');
 var auth = require('../controllers/auth_controler.js');
 
@@ -63,6 +64,8 @@ router.delete('/remove', async function(req, res, next) {
 
 router.post('/create', async function(req, res, next) {
     const orderResponse = await order.createOrder(req.body, userId);
+    await mail.schema.newOrderLogged(orderResponse.status, orderResponse.productsOrdered, orderResponse.customerId);
+
     res.status(orderResponse.status).send({orderResponse, profileResponse:null});
 });
 
