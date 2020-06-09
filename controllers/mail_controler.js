@@ -1,6 +1,7 @@
 var mysql = require('./mysql_controler');
 var nodemailer = require('nodemailer');
 var _ = require('underscore');
+var createMail = require('../mail_content/create_body')
 var profile = require('./profile_controler');
 var product = require('./product_controler');
 
@@ -15,14 +16,15 @@ mail_controler = {
             pass: 'b0dc723f60997f',
         }
     }),
-    send: async (deliverTo, subject, text, html) => {
+    send: async (deliverTo, subject, text, attachments, html) => {
         try{
             const callback = await mail_controler.transporter.sendMail({
                 from: 'Bryan - Your shop assistent <noreply@z-dowozem.com> |',
                 to: deliverTo,
                 subject: subject,
                 text: text,
-                html: html
+                html: html,
+                attachments: attachments,
             })
 
             if(callback) return {
@@ -39,10 +41,15 @@ mail_controler = {
                 console.log('Mail not send! - 200 status not reached!')
                 return 0;
             }else{
-                await mail_controler.send(accInfo.email, 
+                const emailResponse = await mail_controler.send(accInfo.email, 
                     'Z dowozem || Account created!',
                     `Hello ${accInfo.name} Something bla bla bla`,
-                    `<b>${accInfo.name}</b> your account is created!`
+                    [{
+                        filename: 'logo.png',
+                        path: __dirname+'/../mail_content/logo.png',
+                        cid: 'logo' //same cid value as in the html img src
+                    }],
+                    createMail.account(accInfo.name),
                 )
             }
         },
@@ -98,7 +105,7 @@ mail_controler.transporter.verify((error, success) => {
     } else {
       console.log('Server is ready to take messages');
     }
-  });
+});
 
 
 module.exports = mail_controler || 'Mail Controler Problem!';

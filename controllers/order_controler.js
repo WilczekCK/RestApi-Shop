@@ -122,7 +122,7 @@ order_controler = {
             //it's an array with objects, that's why we need ID to target it
                 productsOrdered[getOrderIdPosition].date = moment(order.date).format("YYYY-MM-DD HH:mm:ss");
                 productsOrdered[getOrderIdPosition].price += (order.price) * order.amount;
-                productsOrdered[getOrderIdPosition].amountOfProducts += order.amount;
+                productsOrdered[getOrderIdPosition].amountOfProducts += 1;
                 productsOrdered[getOrderIdPosition].status = order.status;
         })
 
