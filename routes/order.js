@@ -9,13 +9,14 @@ router.post('/create/noauth', async(req, res, next) => {
 
     const profileResponse = await profile.addTemporaryUser( req.body.user );
     const orderResponse = await order.createOrder(req.body, profileResponse.rows.insertId);
-    await mail.schema.newOrderNotLogged(orderResponse.status, orderResponse.productsOrdered, req.body.user);
+    await mail.schema.newOrderNotLogged(orderResponse.status, orderResponse.productsOrdered, profileResponse.rows.insertId);
+    // change email so that the temporary user can create an account somewhen
+    profile.changeInfo({rowsToChange:`email = "temp.${profileResponse.email}"`}, profileResponse.rows.insertId)
 
     res.status(orderResponse.status).send({orderResponse, profileResponse});
 });
 
 router.get('/single/noauth', async function(req, res, next) {
-    console.log(req.query); //address must be equal to -1 and temp user?
     const getOrder = await order.display.singleOrder(req.query);
     res.status(getOrder.status).send(getOrder);
 });
