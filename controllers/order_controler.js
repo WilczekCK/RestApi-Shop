@@ -130,9 +130,6 @@ order_controler = {
         return productsOrdered;
     },
     createProductsArrayFromOrder: async (orders) => {
-        console.log("orders 1");
-        console.log(orders);
-        
         const productsOrdered = []; 
         _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
             productsOrdered.push({order_id: order_id, status: orders[0].status, date: moment(orders[0].date).format("YYYY-MM-DD HH:mm:ss"), products: []})
