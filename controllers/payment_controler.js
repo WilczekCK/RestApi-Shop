@@ -1,6 +1,6 @@
 var request = require("request");
 var axios = require('axios');
-var payuSignature = require('../config/payuSignature')
+var payuConfig = require('../config/payuConfig')
 var order = require('./order_controler.js');
 
 var payment_controler = payment_controler || {}
@@ -22,13 +22,14 @@ payment_controler = {
   },
 
   getToken: () => {
-      const url = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize?grant_type=client_credentials&client_id=386221&client_secret=b7f9cadd7c9fdb3d73c9ea02a23287ac';
+      const url = `https://secure.snd.payu.com/pl/standard/user/oauth/authorize?grant_type=client_credentials&client_id=${payuConfig.clientId}&client_secret=${payuConfig.clientSecret}`;
       return axios.post( url );
   },
   
   sendOrder: (token, req, res) => {
     return new Promise( (resolve, reject) => {
-
+      console.log(req.body.price);
+      
       request({
         method: 'POST',
         url: 'https://secure.snd.payu.com/api/v2_1/orders',
@@ -38,9 +39,9 @@ payment_controler = {
           'Authorization': `Bearer ${token}`
         },
         body: {  
-          notifyUrl: "http://api2.antykstyl.usermd.net/payment/info", 
+          notifyUrl: "http://api.z-dowozem.com/payment/info", 
           customerIp: "127.0.0.1",  
-          merchantPosId: "386221", 
+          merchantPosId: `${payuConfig.clientId}`, 
           totalAmount: req.body.price * 100,
           description: "Zdowozem.pl",   
           currencyCode : "PLN",
@@ -73,10 +74,11 @@ payment_controler = {
   },
 
   handleInfoFromPayu: async ( req ) => {
-    
+    console.log(req.headers['x-openpayu-signature'].split(";")[1].slice(10));
+
     //check if request came from payu
-    let incomingSignature = req.headers['x-openpayu-signature'].split(";")[1].slice(10);
-    if( !incomingSignature === payuSignature ) return { status: 406, msg: "Wrong Authorization"}
+    // let incomingSignature = req.headers['x-openpayu-signature'].split(";")[1].slice(10);
+    // if( !incomingSignature === payuSignature ) return { status: 406, msg: "Wrong Authorization"}
 
     const orderId = Number(req.body.order.extOrderId);
     let status;
