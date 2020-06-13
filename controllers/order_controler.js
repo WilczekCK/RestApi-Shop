@@ -122,7 +122,7 @@ order_controler = {
             //it's an array with objects, that's why we need ID to target it
                 productsOrdered[getOrderIdPosition].date = moment(order.date).format("YYYY-MM-DD HH:mm:ss");
                 productsOrdered[getOrderIdPosition].price += (order.price) * order.amount;
-                productsOrdered[getOrderIdPosition].amountOfProducts += order.amount;
+                productsOrdered[getOrderIdPosition].amountOfProducts += 1;
                 productsOrdered[getOrderIdPosition].status = order.status;
         })
 
@@ -130,9 +130,6 @@ order_controler = {
         return productsOrdered;
     },
     createProductsArrayFromOrder: async (orders) => {
-        console.log("orders 1");
-        console.log(orders);
-        
         const productsOrdered = []; 
         _.each(_.uniq(_.pluck(orders, 'id')), order_id => {
             productsOrdered.push({order_id: order_id, status: orders[0].status, date: moment(orders[0].date).format("YYYY-MM-DD HH:mm:ss"), products: []})

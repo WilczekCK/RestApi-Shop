@@ -20,7 +20,7 @@ profile_controler = {
                 response = userResponse;
             } )
         }
-        return { status: 200, message: 'You are registered succesfully!', rows: response };
+        return { status: 200, message: 'You are registered succesfully!', rows: response, email: email };
     },
     addNew: async ({ firstName, secondName, email, password, phone, street, city, postCode }) => {
         let addressResponse, profileResponse;
@@ -48,7 +48,7 @@ profile_controler = {
                         `email = "${email}"`
                     )    
                 })
-                return { status: 200, message: 'You are registered succesfully!', rows:{ profileResponse, addressResponse }  };
+                return { status: 200, message: 'You are registered succesfully!', rows:{ profileResponse, addressResponse }, accInfo: {name: firstName, email: email}  };
 
             }
         }

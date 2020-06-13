@@ -6,7 +6,11 @@ var payment = require('../controllers/payment_controler.js');
 router.post('/sendorder', function(req, res){
     payment.createOrder(req, res).then( info => {
         res.status(200).send( info )
-    }, err => res.status(500).send({msg: 'Nie udało się ukończyć płatności'}) )
+    },  
+    (err) => { 
+        console.log("err");
+        res.status(500).send({msg: 'Nie udało się ukończyć płatności'})
+    } ) 
 })
 
 // requests from payu
