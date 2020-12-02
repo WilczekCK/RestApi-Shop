@@ -65,7 +65,7 @@ payment_controler = {
       
       return{
         name: prod.name,
-        unitPrice: +prod.price,
+        unitPrice: Math.floor( +prod.price*100 ),
         quantity: prod.amount
       }
       
