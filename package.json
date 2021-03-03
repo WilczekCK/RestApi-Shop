@@ -24,7 +24,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "req-flash": "0.0.3",
     "request": "^2.88.2",
     "supertest": "^4.0.2",
