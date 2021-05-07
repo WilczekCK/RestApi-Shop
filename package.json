@@ -28,7 +28,7 @@
     "req-flash": "0.0.3",
     "request": "^2.88.2",
     "supertest": "^4.0.2",
-    "underscore": "^1.10.2"
+    "underscore": "^1.12.1"
   },
   "devDependencies": {
     "jest": "^24.8.0"
